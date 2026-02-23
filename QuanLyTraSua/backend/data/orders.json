@@ -1,0 +1,43 @@
+[
+  {
+    "code": "TS0001",
+    "customerName": "Khách vãng lai",
+    "items": [
+      { "productSlug": "ts-tran-chau-duong-den", "name": "Trà sữa trân châu đường đen", "size": "M", "toppings": ["PEARL"], "unitPrice": 47000, "qty": 1, "lineTotal": 47000 }
+    ],
+    "total": 47000,
+    "status": "COMPLETED",
+    "createdAt": "2026-02-01T10:00:00.000Z"
+  },
+  {
+    "code": "TS0002",
+    "customerName": "Nguyễn Minh",
+    "items": [
+      { "productSlug": "tra-dao-cam-sa", "name": "Trà đào cam sả", "size": "L", "toppings": ["JELLY"], "unitPrice": 54000, "qty": 2, "lineTotal": 108000 }
+    ],
+    "total": 108000,
+    "status": "COMPLETED",
+    "createdAt": "2026-02-02T14:30:00.000Z"
+  },
+  {
+    "code": "TS0003",
+    "customerName": "Khách vãng lai",
+    "items": [
+      { "productSlug": "ts-matcha", "name": "Trà sữa matcha", "size": "S", "toppings": [], "unitPrice": 42000, "qty": 1, "lineTotal": 42000 },
+      { "productSlug": "tra-vai", "name": "Trà vải", "size": "M", "toppings": ["JELLY"], "unitPrice": 45000, "qty": 1, "lineTotal": 45000 }
+    ],
+    "total": 87000,
+    "status": "COMPLETED",
+    "createdAt": "2026-02-03T09:15:00.000Z"
+  },
+  {
+    "code": "TS0004",
+    "customerName": "Khách vãng lai",
+    "items": [
+      { "productSlug": "sua-chua-nep-cam", "name": "Sữa chua nếp cẩm", "size": "M", "toppings": ["PUDDING"], "unitPrice": 55000, "qty": 1, "lineTotal": 55000 }
+    ],
+    "total": 55000,
+    "status": "CANCELED",
+    "createdAt": "2026-02-03T18:10:00.000Z"
+  }
+]

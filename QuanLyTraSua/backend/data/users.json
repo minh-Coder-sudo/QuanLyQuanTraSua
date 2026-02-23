@@ -1,0 +1,7 @@
+{
+  "_id": "ObjectId",
+  "name": "Admin",
+  "email": "admin@milktea.com",
+  "passwordHash": "demo",
+  "role": "admin"
+}

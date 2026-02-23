@@ -1,0 +1,5 @@
+[
+  { "name": "Trà sữa", "slug": "tra-sua", "sortOrder": 1, "isActive": true },
+  { "name": "Trà trái cây", "slug": "tra-trai-cay", "sortOrder": 2, "isActive": true },
+  { "name": "Sữa chua", "slug": "sua-chua", "sortOrder": 3, "isActive": true }
+]
