@@ -1,3 +1,23 @@
+@import 'tailwindcss';
+html {
+    scroll-behavior: smooth;
+}
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee {
+    animation: marquee 20s linear infinite;
+    width: max-content;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
