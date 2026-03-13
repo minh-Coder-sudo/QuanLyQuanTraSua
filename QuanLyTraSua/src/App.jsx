@@ -1,13 +1,19 @@
 import Footer from './Component/Footer';
 import Header from './Component/Header';
 import banner from './assets/logo.png';
+import News from './Component/page/News';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 export default function App() {
     return (
-        <div className="min-h-screen bg-black">
+        <BrowserRouter>
             <Header />
-            <div className="pt-20"></div>
+
+            <Routes>
+                <Route path="/news" element={<News />} />
+            </Routes>
+
             <Footer />
-        </div>
+        </BrowserRouter>
     );
 }
