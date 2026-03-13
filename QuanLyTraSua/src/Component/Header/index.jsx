@@ -24,7 +24,7 @@ export default function Header() {
                     <a className="text-white/80 hover:text-white" href="#">
                         Vị trí
                     </a>
-                    <a className="text-white/80 hover:text-white" href="#">
+                    <a href="/news" className="text-white/80 hover:text-yellow-400 transition">
                         Tin tức
                     </a>
                 </nav>
