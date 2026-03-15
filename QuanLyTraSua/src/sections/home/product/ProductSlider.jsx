@@ -1,28 +1,44 @@
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ImgTraSua from '../../../assets/ImgTraSua.jpg';
-import ImgTraSua3 from '../../../assets/ImgTraSua3.avif';
 import ImgTraSua1 from '../../../assets/ImgTraSua1.webp';
+import ImgTraSua2 from '../../../assets/ImgTraSua2.jpg';
+import ImgTraSua3 from '../../../assets/ImgTraSua3.avif';
 import ImgTraSua4 from '../../../assets/ImgTraSua4.jpg';
+import ImgTraTraiCay from '../../../assets/ImgTraTraiCay.jpg';
+import ImgTraTraiCay1 from '../../../assets/ImgTraTraiCay1.jpg';
+import ImgTraTraiCay2 from '../../../assets/ImgTraTraiCay2.jpg';
+import ImgTraTraiCay3 from '../../../assets/ImgTraTraiCay3.jpg';
+import ImgTraTraiCay4 from '../../../assets/ImgTraTraiCay4.jpg';
+import ImgML from '../../../assets/ImgML.jpg';
+import ImgML1 from '../../../assets/ImgML1.jpg';
+import ImgML2 from '../../../assets/ImgML2.webp';
+import ImgML3 from '../../../assets/ImgML3.jpg';
+import ImgML4 from '../../../assets/ImgML4.jpg';
+import ImgDaXay from '../../../assets/ImgDaXay.jpg';
+import ImgDaXay1 from '../../../assets/ImgDaXay1.jpg';
+import ImgDaXay2 from '../../../assets/ImgDaXay2.jpg';
+import ImgDaXay3 from '../../../assets/ImgDaXay3.jpg';
+import ImgDaXay4 from '../../../assets/ImgDaXay4.jpg';
 const menu = {
     signature: [
         {
-            name: 'Trà sữa',
+            name: 'Trà Sữa Trân Châu',
             price: '39,000 đ',
             img: ImgTraSua
         },
         {
-            name: 'Latte',
+            name: 'Trân Trâu Đường Đen',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgTraSua1
         },
         {
-            name: 'Latte',
+            name: 'Trà Sữa Oolong',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgTraSua2
         },
         {
-            name: 'Latte',
+            name: 'Trà Sữa Thái Xanh',
             price: '45,000 đ',
             img: ImgTraSua3
         }
@@ -30,24 +46,29 @@ const menu = {
 
     tea: [
         {
-            name: 'Trà Đào',
+            name: 'Trà Xoài',
             price: '38,000 đ',
-            img: ImgTraSua1
+            img: ImgTraTraiCay
+        },
+        {
+            name: 'Trà Đào Cam Sả',
+            price: '36,000 đ',
+            img: ImgTraTraiCay1
+        },
+        {
+            name: 'Trà Đào',
+            price: '45,000 đ',
+            img: ImgTraTraiCay2
+        },
+        {
+            name: 'Trà Dâu',
+            price: '45,000 đ',
+            img: ImgTraTraiCay3
         },
         {
             name: 'Trà Chanh',
-            price: '36,000 đ',
-            img: ImgTraSua1
-        },
-        {
-            name: 'Latte',
             price: '45,000 đ',
-            img: ImgTraSua3
-        },
-        {
-            name: 'Latte',
-            price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgTraTraiCay4
         }
     ],
 
@@ -58,63 +79,78 @@ const menu = {
             img: ImgTraSua
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Trân Trâu Đường Đen',
             price: '42,000 đ',
             img: ImgTraSua1
         },
         {
             name: 'Trà Sữa Oolong',
             price: '45,000 đ',
+            img: ImgTraSua2
+        },
+        {
+            name: 'Trà Sữa Thái Xanh',
+            price: '45,000 đ',
             img: ImgTraSua3
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Trà Sữa Khoai Môn',
             price: '45,000 đ',
             img: ImgTraSua4
         }
     ],
     milk: [
         {
-            name: 'Trà Sữa Trân Châu',
+            name: 'Matcha Latte',
             price: '39,000 đ',
-            img: ImgTraSua4
+            img: ImgML
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Matcha Dâu',
             price: '42,000 đ',
-            img: ImgTraSua4
+            img: ImgML1
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Latte Việt Quốc',
             price: '45,000 đ',
-            img: ImgTraSua1
+            img: ImgML2
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Latte Ca Cao',
             price: '45,000 đ',
-            img: ImgTraSua1
+            img: ImgML3
+        },
+        {
+            name: 'Latte Khoai Môn',
+            price: '45,000 đ',
+            img: ImgML4
         }
     ],
     frappe: [
         {
-            name: 'Trà Sữa Trân Châu',
+            name: 'Đá Xay Ca Cao',
             price: '39,000 đ',
-            img: ImgTraSua
+            img: ImgDaXay
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Đá Xay Socola',
             price: '42,000 đ',
-            img: ImgTraSua1
+            img: ImgDaXay1
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Đá Xay Khoai Môn',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgDaXay2
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Đá Xay Matcha',
             price: '45,000 đ',
-            img: ImgTraSua1
+            img: ImgDaXay3
+        },
+        {
+            name: 'Đá Xay Sữa Chua',
+            price: '45,000 đ',
+            img: ImgDaXay4
         }
     ]
 };

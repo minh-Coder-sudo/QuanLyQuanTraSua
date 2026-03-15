@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import ImgHero from '../../../assets/ImgHero.png';
 import ImgHero1 from '../../../assets/ImgHero1.png';
 import ImgHero2 from '../../../assets/ImgHero2.png';
+
 const slides = [
     {
         image: ImgHero,
@@ -32,8 +33,9 @@ export default function HeroSlider() {
     }, []);
 
     return (
-        <div className='relative h-full w-full overflow-hidden bg-black'>
-            {/* Slide Wrapper */}
+        <div className='relative h-[90vh] w-full overflow-hidden bg-black'>
+            {/* SLIDE WRAPPER */}
+
             <div
                 className='flex h-full transition-transform duration-1000 ease-in-out'
                 style={{
@@ -45,27 +47,36 @@ export default function HeroSlider() {
                         key={index}
                         className='w-full h-full flex-shrink-0 flex items-center justify-center relative'
                     >
+                        {/* IMAGE */}
+
                         <img
                             src={slide.image}
                             alt='Hero'
-                            className='absolute h-[100%] object-contain'
+                            className='absolute w-full h-full object-contain '
                         />
 
-                        <div className='absolute text-center'>
-                            <h2 className='text-yellow-400 tracking-[8px] text-2xl mb-4'>
-                                {slide.sub}
-                            </h2>
+                        {/* TEXT */}
 
-                            <h1 className='text-yellow-400 text-[120px] md:text-[160px] lg:text-[180px] font-extrabold leading-none'>
-                                {slide.title}
-                            </h1>
+                        <div className='absolute text-center'>
+                            {slide.sub && (
+                                <h2 className='text-yellow-400 tracking-[8px] text-2xl mb-4'>
+                                    {slide.sub}
+                                </h2>
+                            )}
+
+                            {slide.title && (
+                                <h1 className='text-yellow-400 text-[120px] md:text-[160px] lg:text-[180px] font-extrabold leading-none'>
+                                    {slide.title}
+                                </h1>
+                            )}
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Dots */}
-            <div className='absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3'>
+            {/* DOTS */}
+
+            <div className='absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-3'>
                 {slides.map((_, index) => (
                     <button
                         key={index}
@@ -77,6 +88,21 @@ export default function HeroSlider() {
                         }`}
                     />
                 ))}
+            </div>
+
+            {/* WAVE BOTTOM */}
+
+            <div className='absolute bottom-0 left-0 w-full overflow-hidden leading-none'>
+                <svg
+                    viewBox='0 0 1440 120'
+                    className='w-full h-[120px]'
+                    preserveAspectRatio='none'
+                >
+                    <path
+                        d='M0,60 C240,120 480,0 720,40 C960,80 1200,120 1440,60 L1440,120 L0,120 Z'
+                        fill='#e5e0d5'
+                    />
+                </svg>
             </div>
         </div>
     );
