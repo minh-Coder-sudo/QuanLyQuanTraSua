@@ -8,9 +8,13 @@ import ProductManagement from './Component/page/ProductManagement.jsx';
 import './App.css';
 import Footer from './Component/Footer';
 import Header from './Component/Header';
-function App() {
+import banner from './assets/logo.png';
+import News from './Component/page/News';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+export default function App() {
     return (
-        <div className="min-h-screen bg-black">
+        <BrowserRouter>
             <Header />
             <Router className="pt-20">
                 <Routes>
@@ -26,7 +30,7 @@ function App() {
                 </Routes>
             </Router>
             <Footer />
-        </div>
+        </BrowserRouter>
     );
 }
 
