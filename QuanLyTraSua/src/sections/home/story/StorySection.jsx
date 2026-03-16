@@ -76,7 +76,7 @@ export default function StorySection() {
                     </text>
                 </svg>
 
-                <p className='text-2xl font-bold  leading-relaxed text-gray-700'>
+                <p className='text-2xl font-bold leading-relaxed text-gray-700'>
                     Chúng tôi tin rằng mỗi ly trà sữa không chỉ là một thức
                     uống, mà còn là một khoảnh khắc ngọt ngào trong ngày. Từ
                     những lá trà được chọn lọc kỹ lưỡng, sữa béo thơm cùng những
