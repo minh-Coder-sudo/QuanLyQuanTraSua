@@ -8,7 +8,7 @@ export default function MainLayout() {
             <Header />
 
             {/* padding top để tránh bị navbar che */}
-            <main className="mt-16">
+            <main className="">
                 <Outlet />
             </main>
 
