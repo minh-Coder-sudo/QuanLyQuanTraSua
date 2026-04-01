@@ -61,7 +61,7 @@ const productList = [
 
 function ProductList() {
     return (
-        <div>
+        <div className="mt-8">
             <ProductSlider />
             <h1 className="text-2xl mt-24 ml-12 font-bold text-orange-600">Danh sách sản phẩm</h1>
             <div className="product-list">

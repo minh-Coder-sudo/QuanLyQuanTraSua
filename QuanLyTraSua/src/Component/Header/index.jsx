@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export default function Header() {
     return (
         <header className="headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+            <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
                 {/* Logo */}
                 <Link to="/" className="shrink-0">
                     <img src={logo} alt="TeaMango" className="h-16 w-auto" />
