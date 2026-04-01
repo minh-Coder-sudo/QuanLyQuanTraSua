@@ -60,11 +60,22 @@ export default function StorySection() {
                     </text>
                 </svg>
 
+<<<<<<< HEAD:QuanLyTraSua/src/Component/sections/home/story/StorySection.jsx
                 <p className="text-2xl font-bold  leading-relaxed text-gray-700">
                     Chúng tôi tin rằng mỗi ly trà sữa không chỉ là một thức uống, mà còn là một khoảnh khắc ngọt ngào
                     trong ngày. Từ những lá trà được chọn lọc kỹ lưỡng, sữa béo thơm cùng những loại topping hấp dẫn,
                     mỗi ly trà sữa đều được chuẩn bị với sự chăm chút để mang đến hương vị trọn vẹn nhất. Hy vọng rằng
                     khi thưởng thức, bạn sẽ cảm nhận được niềm vui nhỏ lan tỏa trong từng ngụm trà.
+=======
+                <p className='text-2xl font-bold leading-relaxed text-gray-700'>
+                    Chúng tôi tin rằng mỗi ly trà sữa không chỉ là một thức
+                    uống, mà còn là một khoảnh khắc ngọt ngào trong ngày. Từ
+                    những lá trà được chọn lọc kỹ lưỡng, sữa béo thơm cùng những
+                    loại topping hấp dẫn, mỗi ly trà sữa đều được chuẩn bị với
+                    sự chăm chút để mang đến hương vị trọn vẹn nhất. Hy vọng
+                    rằng khi thưởng thức, bạn sẽ cảm nhận được niềm vui nhỏ lan
+                    tỏa trong từng ngụm trà.
+>>>>>>> origin/main:QuanLyTraSua/src/sections/home/story/StorySection.jsx
                 </p>
 
                 <button className="mt-10 bg-black text-white px-8 py-3 rounded-full hover:scale-105 transition">

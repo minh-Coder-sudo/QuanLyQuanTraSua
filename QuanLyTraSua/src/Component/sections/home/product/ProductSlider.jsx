@@ -1,20 +1,35 @@
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ImgTraSua from '../../../../assets/ImgTraSua.jpg';
-import ImgTraSua3 from '../../../../assets/ImgTraSua3.avif';
-import ImgTraSua1 from '../../../../assets/ImgTraSua1.webp';
-import ImgTraSua4 from '../../../../assets/ImgTraSua4.jpg';
+import ImgTraSua from '../../../assets/ImgTraSua.jpg';
+import ImgTraSua1 from '../../../assets/ImgTraSua1.webp';
+import ImgTraSua2 from '../../../assets/ImgTraSua2.jpg';
+import ImgTraSua3 from '../../../assets/ImgTraSua3.avif';
+import ImgTraSua4 from '../../../assets/ImgTraSua4.jpg';
+import ImgTraTraiCay from '../../../assets/ImgTraTraiCay.jpg';
+import ImgTraTraiCay1 from '../../../assets/ImgTraTraiCay1.jpg';
+import ImgTraTraiCay2 from '../../../assets/ImgTraTraiCay2.jpg';
+import ImgTraTraiCay3 from '../../../assets/ImgTraTraiCay3.jpg';
+import ImgTraTraiCay4 from '../../../assets/ImgTraTraiCay4.jpg';
+import ImgML from '../../../assets/ImgML.jpg';
+import ImgML1 from '../../../assets/ImgML1.jpg';
+import ImgML2 from '../../../assets/ImgML2.webp';
+import ImgML3 from '../../../assets/ImgML3.jpg';
+import ImgML4 from '../../../assets/ImgML4.jpg';
+import ImgDaXay from '../../../assets/ImgDaXay.jpg';
+import ImgDaXay1 from '../../../assets/ImgDaXay1.jpg';
+import ImgDaXay2 from '../../../assets/ImgDaXay2.jpg';
+import ImgDaXay3 from '../../../assets/ImgDaXay3.jpg';
+import ImgDaXay4 from '../../../assets/ImgDaXay4.jpg';
 import BrownBobaTea from '../../../../assets/BrownBobaTea.png';
 import MatchaBoba from '../../../../assets/MatchaBoba.png';
 import PastelHuesBoba from '../../../../assets/PastelHuesBoba.png';
 import PeachBoba from '../../../../assets/PeachBoba.png';
 import StrawberryBoba from '../../../../assets/StraberryBoba.png';
 import VibrantBoba from '../../../../assets/VibrantBoba.png';
-
 const menu = {
     signature: [
         {
-            name: 'Brown Sugar Boba',
+            name: 'Trà Sữa Trân Châu',
             price: '39,000 đ',
             img: BrownBobaTea,
         },
@@ -37,24 +52,29 @@ const menu = {
 
     tea: [
         {
-            name: 'Peach Tea Boba',
+            name: 'Trà Xoài',
             price: '38,000 đ',
-            img: PeachBoba,
+            img: ImgTraTraiCay,
         },
         {
-            name: 'Lemon Tea Boba',
+            name: 'Trà Đào Cam Sả',
             price: '36,000 đ',
-            img: VibrantBoba,
+            img: ImgTraTraiCay1,
         },
         {
-            name: 'Classic Milk Tea',
+            name: 'Trà Đào',
             price: '45,000 đ',
-            img: BrownBobaTea,
+            img: ImgTraTraiCay2,
         },
         {
-            name: 'Oolong Tea Latte',
+            name: 'Trà Dâu',
             price: '45,000 đ',
-            img: PeachBoba,
+            img: ImgTraTraiCay3,
+        },
+        {
+            name: 'Trà Chanh',
+            price: '45,000 đ',
+            img: ImgTraTraiCay4,
         },
     ],
 
@@ -65,17 +85,22 @@ const menu = {
             img: ImgTraSua,
         },
         {
-            name: 'Matcha Milk Tea',
+            name: 'Trân Trâu Đường Đen',
             price: '42,000 đ',
             img: ImgTraSua1,
         },
         {
             name: 'Oolong Milk Tea',
             price: '45,000 đ',
+            img: ImgTraSua2,
+        },
+        {
+            name: 'Trà Sữa Thái Xanh',
+            price: '45,000 đ',
             img: ImgTraSua3,
         },
         {
-            name: 'Caramel Milk Tea',
+            name: 'Trà Sữa Khoai Môn',
             price: '45,000 đ',
             img: ImgTraSua4,
         },
@@ -83,47 +108,57 @@ const menu = {
 
     milk: [
         {
-            name: 'Strawberry Milk',
+            name: 'Matcha Latte',
             price: '39,000 đ',
-            img: StrawberryBoba,
+            img: ImgML,
         },
         {
-            name: 'Matcha Fresh Milk',
+            name: 'Matcha Dâu',
             price: '42,000 đ',
-            img: MatchaBoba,
+            img: ImgML1,
         },
         {
-            name: 'Chocolate Milk',
+            name: 'Latte Việt Quốc',
             price: '45,000 đ',
-            img: PastelHuesBoba,
+            img: ImgML2,
         },
         {
-            name: 'Vanilla Milk',
+            name: 'Latte Ca Cao',
             price: '45,000 đ',
-            img: BrownBobaTea,
+            img: ImgML3,
+        },
+        {
+            name: 'Latte Khoai Môn',
+            price: '45,000 đ',
+            img: ImgML4,
         },
     ],
 
     frappe: [
         {
-            name: 'Chocolate Frappe',
+            name: 'Đá Xay Ca Cao',
             price: '39,000 đ',
-            img: ImgTraSua3,
+            img: ImgDaXay,
         },
         {
-            name: 'Matcha Frappe',
+            name: 'Đá Xay Socola',
             price: '42,000 đ',
-            img: ImgTraSua,
+            img: ImgDaXay1,
         },
         {
-            name: 'Strawberry Frappe',
+            name: 'Đá Xay Khoai Môn',
             price: '45,000 đ',
-            img: ImgTraSua1,
+            img: ImgDaXay2,
         },
         {
-            name: 'Caramel Frappe',
+            name: 'Đá Xay Matcha',
             price: '45,000 đ',
-            img: ImgTraSua4,
+            img: ImgDaXay3,
+        },
+        {
+            name: 'Đá Xay Sữa Chua',
+            price: '45,000 đ',
+            img: ImgDaXay4,
         },
     ],
 };
