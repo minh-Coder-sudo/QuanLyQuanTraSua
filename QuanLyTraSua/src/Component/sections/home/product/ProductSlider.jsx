@@ -1,122 +1,131 @@
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ImgTraSua from '../../../assets/ImgTraSua.jpg';
-import ImgTraSua3 from '../../../assets/ImgTraSua3.avif';
-import ImgTraSua1 from '../../../assets/ImgTraSua1.webp';
-import ImgTraSua4 from '../../../assets/ImgTraSua4.jpg';
+import ImgTraSua from '../../../../assets/ImgTraSua.jpg';
+import ImgTraSua3 from '../../../../assets/ImgTraSua3.avif';
+import ImgTraSua1 from '../../../../assets/ImgTraSua1.webp';
+import ImgTraSua4 from '../../../../assets/ImgTraSua4.jpg';
+import BrownBobaTea from '../../../../assets/BrownBobaTea.png';
+import MatchaBoba from '../../../../assets/MatchaBoba.png';
+import PastelHuesBoba from '../../../../assets/PastelHuesBoba.png';
+import PeachBoba from '../../../../assets/PeachBoba.png';
+import StrawberryBoba from '../../../../assets/StraberryBoba.png';
+import VibrantBoba from '../../../../assets/VibrantBoba.png';
+
 const menu = {
     signature: [
         {
-            name: 'Trà sữa',
+            name: 'Brown Sugar Boba',
             price: '39,000 đ',
-            img: ImgTraSua
+            img: BrownBobaTea,
         },
         {
-            name: 'Latte',
+            name: 'Matcha Boba Latte',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: MatchaBoba,
         },
         {
-            name: 'Latte',
+            name: 'Strawberry Boba Milk',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: StrawberryBoba,
         },
         {
-            name: 'Latte',
+            name: 'Pastel Milk Tea',
             price: '45,000 đ',
-            img: ImgTraSua3
-        }
+            img: PastelHuesBoba,
+        },
     ],
 
     tea: [
         {
-            name: 'Trà Đào',
+            name: 'Peach Tea Boba',
             price: '38,000 đ',
-            img: ImgTraSua1
+            img: PeachBoba,
         },
         {
-            name: 'Trà Chanh',
+            name: 'Lemon Tea Boba',
             price: '36,000 đ',
-            img: ImgTraSua1
+            img: VibrantBoba,
         },
         {
-            name: 'Latte',
+            name: 'Classic Milk Tea',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: BrownBobaTea,
         },
         {
-            name: 'Latte',
+            name: 'Oolong Tea Latte',
             price: '45,000 đ',
-            img: ImgTraSua3
-        }
+            img: PeachBoba,
+        },
     ],
 
     milktea: [
         {
-            name: 'Trà Sữa Trân Châu',
+            name: 'Classic Boba Milk Tea',
             price: '39,000 đ',
-            img: ImgTraSua
+            img: ImgTraSua,
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Matcha Milk Tea',
             price: '42,000 đ',
-            img: ImgTraSua1
+            img: ImgTraSua1,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Oolong Milk Tea',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgTraSua3,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Caramel Milk Tea',
             price: '45,000 đ',
-            img: ImgTraSua4
-        }
+            img: ImgTraSua4,
+        },
     ],
+
     milk: [
         {
-            name: 'Trà Sữa Trân Châu',
+            name: 'Strawberry Milk',
             price: '39,000 đ',
-            img: ImgTraSua4
+            img: StrawberryBoba,
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Matcha Fresh Milk',
             price: '42,000 đ',
-            img: ImgTraSua4
+            img: MatchaBoba,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Chocolate Milk',
             price: '45,000 đ',
-            img: ImgTraSua1
+            img: PastelHuesBoba,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Vanilla Milk',
             price: '45,000 đ',
-            img: ImgTraSua1
-        }
+            img: BrownBobaTea,
+        },
     ],
+
     frappe: [
         {
-            name: 'Trà Sữa Trân Châu',
+            name: 'Chocolate Frappe',
             price: '39,000 đ',
-            img: ImgTraSua
+            img: ImgTraSua3,
         },
         {
-            name: 'Trà Sữa Matcha',
+            name: 'Matcha Frappe',
             price: '42,000 đ',
-            img: ImgTraSua1
+            img: ImgTraSua,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Strawberry Frappe',
             price: '45,000 đ',
-            img: ImgTraSua3
+            img: ImgTraSua1,
         },
         {
-            name: 'Trà Sữa Oolong',
+            name: 'Caramel Frappe',
             price: '45,000 đ',
-            img: ImgTraSua1
-        }
-    ]
+            img: ImgTraSua4,
+        },
+    ],
 };
 
 export default function ProductSlider() {
@@ -145,7 +154,7 @@ export default function ProductSlider() {
 
             slider.scrollBy({
                 left: STEP,
-                behavior: 'smooth'
+                behavior: 'smooth',
             });
 
             const maxScroll = slider.scrollWidth - slider.clientWidth;
@@ -163,14 +172,14 @@ export default function ProductSlider() {
     const scrollRight = () => {
         sliderRef.current.scrollBy({
             left: STEP,
-            behavior: 'smooth'
+            behavior: 'smooth',
         });
     };
 
     const scrollLeft = () => {
         sliderRef.current.scrollBy({
             left: -STEP,
-            behavior: 'smooth'
+            behavior: 'smooth',
         });
     };
 
@@ -199,69 +208,47 @@ export default function ProductSlider() {
     };
 
     return (
-        <section className='bg-[#f3eee5] py-28 relative'>
+        <section className="bg-[#f3eee5] py-28 relative">
             {/* TITLE */}
 
-            <div className='text-center mb-10'>
-                <p className='uppercase tracking-[6px] text-3xl text-black font-bold -mt-5 mb-10'>
-                    FEATURED DRINK
-                </p>
+            <div className="text-center mb-10">
+                <p className="uppercase tracking-[6px] text-3xl text-black font-bold -mt-5 mb-10">FEATURED DRINK</p>
 
-                <h2 className='text-5xl font-extrabold text-orange-500 mt-20'>
-                    “TRÀ SỮA” COLLECTION
-                </h2>
+                <h2 className="text-5xl font-extrabold text-orange-500 mt-20">“TRÀ SỮA” COLLECTION</h2>
             </div>
 
             {/* CATEGORY */}
 
-            <div className='flex justify-center gap-16 text-3xl text-black font-bold   mb-20'>
+            <div className="flex justify-center gap-16 text-3xl text-black font-bold   mb-20">
                 <button
                     onClick={() => setCategory('signature')}
-                    className={
-                        category === 'signature'
-                            ? 'border-b-2 border-black pb-1'
-                            : ''
-                    }
+                    className={category === 'signature' ? 'border-b-2 border-black pb-1' : ''}
                 >
                     THỨC UỐNG HOT
                 </button>
 
                 <button
                     onClick={() => setCategory('milktea')}
-                    className={
-                        category === 'milktea'
-                            ? 'border-b-2 border-black pb-1'
-                            : ''
-                    }
+                    className={category === 'milktea' ? 'border-b-2 border-black pb-1' : ''}
                 >
                     TRÀ SỮA
                 </button>
 
                 <button
                     onClick={() => setCategory('tea')}
-                    className={
-                        category === 'tea' ? 'border-b-2 border-black pb-1' : ''
-                    }
+                    className={category === 'tea' ? 'border-b-2 border-black pb-1' : ''}
                 >
                     TRÀ TRÁI CÂY
                 </button>
                 <button
                     onClick={() => setCategory('milk')}
-                    className={
-                        category === 'milk'
-                            ? 'border-b-2 border-black pb-1'
-                            : ''
-                    }
+                    className={category === 'milk' ? 'border-b-2 border-black pb-1' : ''}
                 >
                     MATCHA / LATTE
                 </button>
                 <button
                     onClick={() => setCategory('frappe')}
-                    className={
-                        category === 'frappe'
-                            ? 'border-b-2 border-black pb-1'
-                            : ''
-                    }
+                    className={category === 'frappe' ? 'border-b-2 border-black pb-1' : ''}
                 >
                     ĐÁ XAY
                 </button>
@@ -269,38 +256,30 @@ export default function ProductSlider() {
 
             {/* SLIDER WRAPPER */}
 
-            <div className='relative max-w-[1200px] mx-auto'>
+            <div className="relative max-w-[1200px] mx-auto">
                 {/* LEFT ARROW */}
 
                 <button
                     onClick={scrollLeft}
-                    className='absolute -left-15 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition'
+                    className="absolute -left-15 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition"
                 >
-                    <ChevronLeft
-                        size={28}
-                        strokeWidth={2.5}
-                        className='text-black'
-                    />
+                    <ChevronLeft size={28} strokeWidth={2.5} className="text-black" />
                 </button>
 
                 {/* RIGHT ARROW */}
 
                 <button
                     onClick={scrollRight}
-                    className='absolute -right-15 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition'
+                    className="absolute -right-15 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition"
                 >
-                    <ChevronRight
-                        size={28}
-                        strokeWidth={2.5}
-                        className='text-black'
-                    />
+                    <ChevronRight size={28} strokeWidth={2.5} className="text-black" />
                 </button>
 
                 {/* SLIDER */}
 
                 <div
                     ref={sliderRef}
-                    className='flex gap-10 overflow-hidden cursor-grab select-none'
+                    className="flex gap-10 overflow-hidden cursor-grab select-none"
                     onMouseDown={mouseDown}
                     onMouseLeave={mouseLeave}
                     onMouseUp={mouseUp}
@@ -309,18 +288,18 @@ export default function ProductSlider() {
                     {products.map((item, i) => (
                         <div
                             key={i}
-                            className='w-[260px] flex-shrink-0 text-center group relative'
+                            className="w-[260px] flex-shrink-0 text-center group relative"
                             onMouseEnter={() => setIsPaused(true)}
                             onMouseLeave={() => setIsPaused(false)}
                         >
-                            <div className='absolute w-56 h-56 bg-orange-200 rounded-full blur-3xl opacity-40 mx-auto left-0 right-0'></div>
+                            <div className="absolute w-56 h-56 bg-orange-200 rounded-full blur-3xl opacity-40 mx-auto left-0 right-0"></div>
 
                             <img
                                 src={item.img}
-                                className='relative w-56 h-56 object-cover mx-auto rounded-full transition duration-500 group-hover:scale-110'
+                                className="relative w-56 h-56 object-cover mx-auto rounded-full transition duration-500 group-hover:scale-110"
                             />
 
-                            <p className='mt-6 text-gray-500 font-bold'>
+                            <p className="mt-6 text-gray-500 font-bold">
                                 {category === 'signature'
                                     ? 'Thức Uống Hot'
                                     : category === 'milktea'
@@ -332,13 +311,9 @@ export default function ProductSlider() {
                                           : 'Đá Xay'}
                             </p>
 
-                            <h3 className='text-xl text-black font-bold'>
-                                {item.name}
-                            </h3>
+                            <h3 className="text-xl text-black font-bold">{item.name}</h3>
 
-                            <p className='text-orange-500 text-xl font-bold mt-2'>
-                                {item.price}
-                            </p>
+                            <p className="text-orange-500 text-xl font-bold mt-2">{item.price}</p>
                         </div>
                     ))}
                 </div>

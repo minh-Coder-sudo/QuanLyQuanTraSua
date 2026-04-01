@@ -1,0 +1,60 @@
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cột */
+  gap: 25px;
+  padding: 40px;
+  background: white; /* nền trắng */
+}
+
+.product-item {
+  
+  background: #1e3a6d; /* màu xanh của card */
+  border-radius: 20px;
+  padding: 25px;
+  color: white;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 25px;
+  padding-bottom: 40px;
+  overflow: hidden; 
+  transition: all 0.3s ease;
+}
+
+.product-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.product-info {
+  width: 55%;
+}
+
+.product-image {
+  width: 130px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+  transform: scale(1.4);
+}
+
+.product-button {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+
+  background: white;
+  color: black;
+  border-radius: 20px;
+  padding: 8px 18px;
+  border: none;
+  cursor: pointer;
+}
+.product-button:hover {
+  background: #f15323;
+  color: white;
+}
