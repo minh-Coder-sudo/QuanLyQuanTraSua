@@ -1,0 +1,6 @@
+.nav-header{
+    transition: transform 0.3s ease;
+}
+.nav-header:hover{
+    transform: scale(1.2);
+}
