@@ -2,10 +2,10 @@ import Header from '../Component/Header';
 import Footer from '../Component/Footer';
 import { Outlet } from 'react-router-dom';
 
-export default function MainLayout() {
+export default function MainLayout({ user, setUser }) {
     return (
         <div className="bg-white text-black dark:bg-black dark:text-white transition-colors duration-500 min-h-screen">
-            <Header />
+            <Header user={user} setUser={setUser} />
 
             {/* padding top để tránh bị navbar che */}
             <main className="">
