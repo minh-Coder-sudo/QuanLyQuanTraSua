@@ -1,97 +1,151 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import authService from '../../services/auth';
 
-const Profile = () => {
+const Profile = ({ user, setUser }) => {
+  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    fullname: user?.fullname || '',
+    email: user?.email || '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => {
+    authService.logout();
+    setUser(null);
+    navigate('/login');
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+    try {
+      const updated = await authService.updateProfile(formData);
+      setUser(updated);
+      setIsEditing(false);
+      alert('Cập nhật thông tin thành công!');
+    } catch (error) {
+      alert(error.message || 'Lỗi khi cập nhật thông tin!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getInitials = (name) => {
+    return name ? name.charAt(0).toUpperCase() : 'U';
+  };
+
+  if (!user) return null;
+
   return (
-    <div style={styles.container}>
-      {/* Global reset để đảm bảo không bị lệch do body/html */}
-      <style>{`
-        body, html {
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden; /* Ngăn hiện thanh cuộn thừa */
-        }
-      `}</style>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden pt-24">
+      {/* Background Decor */}
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-500/10 rounded-full blur-[120px]"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-orange-600/10 rounded-full blur-[120px]"></div>
 
-      <div style={styles.card}>
-        <div style={styles.icon}>🧑‍⚖️</div>
-        <h2 style={styles.title}>Thông Tin Người Dùng</h2>
-        <div style={styles.avatar}>🧋</div>
-        
-        <div style={styles.infoGroup}>
-          <p style={styles.infoLabel}>Họ tên:</p>
-          <p style={styles.infoValue}>Nguyễn Ngô Đức Mạnh</p>
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative z-10 transition-all hover:border-white/20">
+        {/* Header Icon */}
+        <div className="flex justify-center mb-8">
+          <div className="p-4 bg-amber-500/20 rounded-2xl border border-amber-500/30">
+            <span className="text-3xl">☕</span>
+          </div>
         </div>
-        
-        <div style={styles.infoGroup}>
-          <p style={styles.infoLabel}>Vai trò:</p>
-          <p style={{...styles.infoValue, color: '#ffd700'}}>Quản lý tối cao (Admin)</p>
+
+        <h2 className="text-2xl font-bold text-white text-center mb-6 tracking-tight tracking-widest uppercase">Hồ Sơ Cá Nhân</h2>
+
+        {/* User Image Area */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative group">
+            <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white text-4xl font-bold border-4 border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300">
+              {getInitials(user.fullname)}
+            </div>
+          </div>
+          <p className="mt-4 text-xl font-bold text-white">{user.fullname}</p>
+          <span className={`mt-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${user.role === 'ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+            {user.role === 'ADMIN' ? 'Quản Lý Tối Cao' : 'Thành Viên Vàng'}
+          </span>
         </div>
-        
-        <div style={styles.infoGroup}>
-          <p style={styles.infoLabel}>Email:</p>
-          <p style={styles.infoValue}>manh.duc.nguyen@gmail.com</p>
+
+        {/* Info Grid */}
+        <div className="space-y-4 mb-10">
+          <div className="bg-white/5 border border-white/5 rounded-2xl p-4 transition">
+            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Họ và tên</p>
+            {isEditing ? (
+              <input 
+                className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white outline-none focus:border-amber-500"
+                value={formData.fullname}
+                onChange={(e) => setFormData({...formData, fullname: e.target.value})}
+              />
+            ) : (
+              <p className="text-white font-medium">{user.fullname}</p>
+            )}
+          </div>
+
+          <div className="bg-white/5 border border-white/5 rounded-2xl p-4 transition">
+            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Email đăng nhập</p>
+            {isEditing ? (
+              <input 
+                className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white outline-none focus:border-amber-500"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            ) : (
+              <p className="text-white font-medium">{user.email}</p>
+            )}
+          </div>
+
+          {isEditing && (
+            <div className="bg-white/5 border border-white/5 rounded-2xl p-4 transition">
+              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Mật khẩu mới (Để trống nếu giữ nguyên)</p>
+              <input 
+                type="password"
+                className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white outline-none focus:border-amber-500"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
+          )}
         </div>
-        
-        <button style={styles.logoutButton}>Đăng xuất</button>
+
+        {/* Actions */}
+        <div className="flex flex-col gap-3">
+          {isEditing ? (
+            <div className="flex gap-2">
+              <button 
+                onClick={handleUpdate}
+                disabled={loading}
+                className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-white font-bold text-sm hover:opacity-90 transition active:scale-95 disabled:opacity-50"
+              >
+                {loading ? 'ĐANG LƯU...' : 'LƯU THAY ĐỔI'}
+              </button>
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="px-6 py-4 bg-white/10 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/20 transition"
+              >
+                HỦY
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="w-full py-4 bg-white/10 border border-white/20 rounded-2xl text-white font-bold text-sm hover:bg-white/20 transition active:scale-95 border-dashed"
+            >
+              CHỈNH SỬA HỒ SƠ
+            </button>
+          )}
+          
+          <button 
+            onClick={handleLogout}
+            className="w-full py-4 bg-amber-500 hover:bg-amber-600 rounded-2xl text-white font-black text-sm transition active:scale-95 tracking-[4px] uppercase shadow-lg shadow-amber-500/20"
+          >
+            ĐĂNG XUẤT TÀI KHOẢN
+          </button>
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center', // Căn giữa ngang
-    alignItems: 'center',     // Căn giữa dọc
-    width: '100vw',           // Chiều rộng bằng toàn bộ màn hình
-    height: '100vh',          // Chiều cao bằng toàn bộ màn hình
-    backgroundColor: '#121212',
-    position: 'fixed',        // Cố định để đè lên mọi lề mặc định
-    top: 0,
-    left: 0,
-  },
-  card: {
-    padding: '40px 30px',
-    borderRadius: '15px',
-    backgroundColor: '#1e1e1e',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-    textAlign: 'center',
-    width: '90%',             // Co dãn linh hoạt trên mobile
-    maxWidth: '380px',        // Không quá to trên PC
-    border: '1px solid #333',
-  },
-  icon: { fontSize: '40px', marginBottom: '10px', color: '#ffd700' },
-  title: { marginBottom: '20px', color: '#e0e0e0', fontWeight: 'bold' },
-  avatar: { 
-    fontSize: '80px', 
-    marginBottom: '30px', 
-    backgroundColor: '#2a2a2a', 
-    width: '120px', 
-    height: '120px', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    borderRadius: '50%', 
-    margin: '0 auto 30px auto', 
-    border: '3px solid #ffd700' 
-  },
-  infoGroup: { textAlign: 'left', marginBottom: '15px', borderBottom: '1px solid #333', paddingBottom: '10px' },
-  infoLabel: { color: '#a0a0a0', fontSize: '12px', margin: '0 0 5px 0', textTransform: 'uppercase' },
-  infoValue: { color: '#fff', fontSize: '16px', margin: '0', fontWeight: '500' },
-  logoutButton: { 
-    width: '100%', 
-    padding: '12px', 
-    borderRadius: '8px', 
-    border: 'none', 
-    backgroundColor: '#ff4d4d', 
-    color: 'white', 
-    fontWeight: 'bold', 
-    cursor: 'pointer', 
-    marginTop: '30px',
-    fontSize: '16px'
-  },
 };
 
 export default Profile;

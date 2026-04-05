@@ -121,14 +121,19 @@ export default function Location() {
   };
 
   return (
-    <div className="bg-white" style={{ paddingTop: 64 }}>
-      <div className="mx-auto max-w-screen-xl px-4 py-8">
+    <div className="bg-slate-50 min-h-screen pt-24 pb-12">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Hệ Thống Cửa Hàng</h1>
+          <p className="text-slate-500 font-medium">Tìm kiếm địa chỉ Tea Mango gần bạn nhất</p>
+        </div>
+
         <div
-          className="flex border border-blue-800 rounded-lg"
-          style={{ height: 'calc(100vh - 64px - 64px)', minHeight: 480 }}
+          className="flex flex-col lg:flex-row bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl shadow-slate-200/50"
+          style={{ height: '700px', minHeight: '600px' }}
         >
           {/* ── Left Panel ─────────────────────────────────────────────── */}
-          <div className="w-72 shrink-0 flex flex-col bg-white rounded-l-lg" style={{ borderRight: '1px solid #1e3a8a' }}>
+          <div className="w-full lg:w-80 shrink-0 flex flex-col bg-white" style={{ borderRight: '1px solid #f1f5f9' }}>
             {/* Controls */}
             <div style={{ backgroundColor: '#1e3a8a', padding: '12px', borderRadius: '8px 0 0 0' }}>
               {/* Search */}
@@ -212,7 +217,7 @@ export default function Location() {
             <MapContainer
               center={provinceData.center}
               zoom={provinceData.zoom}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', zIndex: 0 }}
               zoomControl={true}
             >
               <TileLayer

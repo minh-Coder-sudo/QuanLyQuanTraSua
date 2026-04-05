@@ -1,8 +1,21 @@
 import React from 'react';
 import logo from '../../assets/logo.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import authService from '../../services/auth';
 
 export default function Header({ user, setUser }) {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        authService.logout();
+        setUser(null);
+        navigate('/login');
+    };
+
+    const getInitials = (name) => {
+        return name ? name.charAt(0).toUpperCase() : 'U';
+    };
+
     return (
         <header className="headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10">
             <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
@@ -13,82 +26,62 @@ export default function Header({ user, setUser }) {
 
                 {/* Menu */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-semibold uppercase tracking-wide">
-                    <Link
-                        to="/Home"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
-                    >
-                        Trang chủ
-                    </Link>
-
-                    <Link
-                        to="/menu"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
-                    >
-                        Menu
-                    </Link>
-
-                    <Link
-                        to="/products"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
-                    >
-                        Sản phẩm
-                    </Link>
-
-                    <Link
-                        to="/location"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
-                    >
-                        Vị trí
-                    </Link>
-
-                    <Link
-                        to="/news"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
-                    >
-                        Tin tức
-                    </Link>
+                    <Link to="/" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Trang chủ</Link>
+                    <Link to="/menu" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Menu</Link>
+                    <Link to="/products" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Sản phẩm</Link>
+                    <Link to="/location" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Vị trí</Link>
+                    <Link to="/news" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Tin tức</Link>
                 </nav>
 
                 {/* Icons */}
                 <div className="flex items-center gap-4 relative">
                     <img src="https://flagcdn.com/w40/vn.png" alt="VN" className="h-5 w-auto rounded-sm" />
 
-                    <i className="fa-brands fa-facebook-f nav-header hover:scale-110 transition-transform text-white/80 hover:text-white text-lg cursor-pointer" />
-                    <i className="fa-brands fa-instagram nav-header hover:scale-110 transition-transform text-white/80 hover:text-white text-lg cursor-pointer" />
-
                     {/* ===== AUTH ===== */}
                     {!user ? (
                         <div className="hidden md:flex items-center gap-3">
-                            <Link to="/login" className="text-white/80 hover:text-white text-sm font-semibold">
+                            <Link to="/login" className="text-white/80 hover:text-white text-sm font-semibold transition hover:-translate-y-0.5">
                                 Đăng nhập
                             </Link>
-
-                            <Link
-                                to="/register"
-                                className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
-                            >
+                            <Link to="/register" className="bg-white text-black px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-amber-400 transition transform hover:scale-105">
                                 Đăng ký
                             </Link>
                         </div>
                     ) : (
-                        <div className="relative group">
-                            <img
-                                src={user.avatar}
-                                alt="avatar"
-                                className="h-10 w-10 rounded-full cursor-pointer border border-white/30"
-                            />
+                        <div className="relative group flex items-center gap-3 cursor-pointer">
+                            <div className="hidden md:block text-right">
+                                <p className="text-xs text-white/60 mb-0">Xin chào,</p>
+                                <p className="text-sm font-bold text-white leading-tight">{user.fullname}</p>
+                            </div>
+                            
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold border-2 border-white/20 shadow-lg group-hover:rotate-12 transition">
+                                {getInitials(user.fullname)}
+                            </div>
 
-                            {/* Dropdown */}
-                            <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition">
-                                <Link className="block px-4 py-2 hover:bg-gray-100" to="/profile">
-                                    Hồ sơ
-                                </Link>
-                                <button
-                                    onClick={() => setUser(null)}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                >
-                                    Đăng xuất
-                                </button>
+                            {/* Dropdown Menu */}
+                            <div className="absolute right-0 top-full pt-4 w-48 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
+                                <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100">
+                                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tài khoản</p>
+                                    </div>
+                                    
+                                    <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        Hồ sơ của tôi
+                                    </Link>
+
+                                    {user.role === 'ADMIN' && (
+                                        <Link to="/admin/products" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition border-t border-gray-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                            Quản lý cửa hàng
+                                        </Link>
+                                    )}
+
+                                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition border-t border-gray-50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                        Đăng xuất
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
