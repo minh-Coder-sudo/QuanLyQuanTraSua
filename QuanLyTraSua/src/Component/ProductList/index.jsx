@@ -10,6 +10,7 @@ import '../../css/Product.css';
 import ProductSlider from '../sections/home/product/ProductSlider';
 import ProductDetail from '../../Component/ProductDetail';
 const productList = [
+    // ================= MILK TEA =================
     {
         id: 1,
         name: 'Trà sữa truyền thống',
@@ -33,7 +34,7 @@ const productList = [
         price: 42000,
         category: 'Milk Tea',
         image: MatchaBoba,
-        description: 'Trà sữa matcha Nhật Bản thơm béo, topping trân châu trắng.',
+        description: 'Trà sữa matcha Nhật Bản thơm béo.',
         sizes: [
             { code: 'S', label: 'Small', extra: 0 },
             { code: 'M', label: 'Medium', extra: 6000 },
@@ -42,7 +43,6 @@ const productList = [
         toppings: [
             { code: 'WHITE_PEARL', name: 'Trân châu trắng', price: 8000 },
             { code: 'RED_BEAN', name: 'Đậu đỏ', price: 9000 },
-            { code: 'CHEESE', name: 'Kem cheese', price: 10000 },
         ],
     },
     {
@@ -51,35 +51,30 @@ const productList = [
         price: 40000,
         category: 'Milk Tea',
         image: PastelHuesBoba,
-        description: 'Hương vị socola đậm đà kết hợp lớp kem sữa béo.',
+        description: 'Hương vị socola đậm đà.',
         sizes: [
             { code: 'S', label: 'Small', extra: 0 },
             { code: 'M', label: 'Medium', extra: 5000 },
             { code: 'L', label: 'Large', extra: 10000 },
         ],
         toppings: [
-            { code: 'PUDDING', name: 'Pudding trứng', price: 8000 },
             { code: 'OREO', name: 'Oreo vụn', price: 9000 },
-            { code: 'CHEESE_FOAM', name: 'Milk foam', price: 10000 },
+            { code: 'PUDDING', name: 'Pudding', price: 8000 },
         ],
     },
     {
         id: 4,
-        name: 'Trà sữa khoai môn',
+        name: 'Trà sữa đào',
         price: 43000,
         category: 'Milk Tea',
         image: PeachBoba,
-        description: 'Trà sữa khoai môn tím béo ngậy, topping pudding.',
+        description: 'Trà sữa đào ngọt thanh, topping thạch đào.',
         sizes: [
             { code: 'S', label: 'Small', extra: 0 },
             { code: 'M', label: 'Medium', extra: 5000 },
             { code: 'L', label: 'Large', extra: 11000 },
         ],
-        toppings: [
-            { code: 'PUDDING', name: 'Pudding', price: 8000 },
-            { code: 'TARO_BALL', name: 'Trân châu khoai môn', price: 10000 },
-            { code: 'CHEESE', name: 'Kem cheese', price: 10000 },
-        ],
+        toppings: [{ code: 'PEACH_JELLY', name: 'Thạch đào', price: 8000 }],
     },
     {
         id: 5,
@@ -87,17 +82,13 @@ const productList = [
         price: 39000,
         category: 'Milk Tea',
         image: StrawberryBoba,
-        description: 'Trà sữa vị dâu ngọt dịu, thêm thạch trái cây.',
+        description: 'Trà sữa vị dâu ngọt dịu.',
         sizes: [
             { code: 'S', label: 'Small', extra: 0 },
             { code: 'M', label: 'Medium', extra: 5000 },
             { code: 'L', label: 'Large', extra: 10000 },
         ],
-        toppings: [
-            { code: 'FRUIT_JELLY', name: 'Thạch trái cây', price: 7000 },
-            { code: 'STRAWBERRY_JELLY', name: 'Thạch dâu', price: 8000 },
-            { code: 'CHEESE_FOAM', name: 'Milk foam', price: 10000 },
-        ],
+        toppings: [{ code: 'STRAW_JELLY', name: 'Thạch dâu', price: 8000 }],
     },
     {
         id: 6,
@@ -105,18 +96,16 @@ const productList = [
         price: 45000,
         category: 'Milk Tea',
         image: VibrantBoba,
-        description: 'Trà sữa caramel thơm ngọt, topping trân châu hoàng kim.',
+        description: 'Trà sữa caramel thơm ngọt.',
         sizes: [
             { code: 'S', label: 'Small', extra: 0 },
             { code: 'M', label: 'Medium', extra: 6000 },
             { code: 'L', label: 'Large', extra: 12000 },
         ],
-        toppings: [
-            { code: 'GOLDEN_PEARL', name: 'Trân châu hoàng kim', price: 8000 },
-            { code: 'PUDDING', name: 'Pudding caramel', price: 10000 },
-            { code: 'CHEESE', name: 'Kem cheese', price: 10000 },
-        ],
+        toppings: [{ code: 'GOLDEN_PEARL', name: 'Trân châu hoàng kim', price: 8000 }],
     },
+
+    // ================= ICE BLENDED =================
 ];
 
 function ProductList() {

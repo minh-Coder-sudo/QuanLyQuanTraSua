@@ -1,52 +1,67 @@
 import React from 'react';
 import logo from '../../assets/logo.png';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export default function Header({ user, setUser }) {
     return (
         <header className="headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10">
             <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
                 {/* Logo */}
-                <Link to="/" className="shrink-0">
+                <NavLink to="/" className="shrink-0">
                     <img src={logo} alt="TeaMango" className="h-16 w-auto" />
-                </Link>
+                </NavLink>
 
                 {/* Menu */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-semibold uppercase tracking-wide">
-                    <Link
+                    <NavLink
                         to="/Home"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
                     >
                         Trang chủ
-                    </Link>
+                    </NavLink>
 
-                    <Link
+                    <NavLink
                         to="/menu"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
                     >
                         Menu
-                    </Link>
+                    </NavLink>
 
-                    <Link
+                    <NavLink
                         to="/products"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
                     >
                         Sản phẩm
-                    </Link>
+                    </NavLink>
 
-                    <Link
+                    <NavLink
                         to="/location"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
                     >
                         Vị trí
-                    </Link>
+                    </NavLink>
 
-                    <Link
+                    <NavLink
                         to="/news"
-                        className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
                     >
                         Tin tức
-                    </Link>
+                    </NavLink>
                 </nav>
 
                 {/* Icons */}
@@ -59,16 +74,16 @@ export default function Header({ user, setUser }) {
                     {/* ===== AUTH ===== */}
                     {!user ? (
                         <div className="hidden md:flex items-center gap-3">
-                            <Link to="/login" className="text-white/80 hover:text-white text-sm font-semibold">
+                            <NavLink to="/login" className="text-white/80 hover:text-white text-sm font-semibold">
                                 Đăng nhập
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            <NavLink
                                 to="/register"
                                 className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
                             >
                                 Đăng ký
-                            </Link>
+                            </NavLink>
                         </div>
                     ) : (
                         <div className="relative group">
@@ -80,9 +95,9 @@ export default function Header({ user, setUser }) {
 
                             {/* Dropdown */}
                             <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition">
-                                <Link className="block px-4 py-2 hover:bg-gray-100" to="/profile">
+                                <NavLink className="block px-4 py-2 hover:bg-gray-100" to="/profile">
                                     Hồ sơ
-                                </Link>
+                                </NavLink>
                                 <button
                                     onClick={() => setUser(null)}
                                     className="w-full text-left px-4 py-2 hover:bg-gray-100"
