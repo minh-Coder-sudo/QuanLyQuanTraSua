@@ -40,7 +40,12 @@ function ProductList() {
                     />
                 ))}
             </div>
-            {selectedProduct && <ProductDetail product={selectedProduct} onClose={() => setselectedProduct(null)} />}
+            {selectedProduct && (
+                <ProductDetail 
+                    product={selectedProduct} 
+                    onClose={() => setselectedProduct(null)} 
+                />
+            )}
         </div>
     );
 }

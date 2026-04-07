@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from '../../assets/logo.png';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import authService from '../../services/auth';
 
 export default function Header({ user, setUser }) {
@@ -17,35 +17,85 @@ export default function Header({ user, setUser }) {
     };
 
     return (
-        <header className="headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10">
-            <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+        <header className='headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10'>
+            <div className='mx-auto flex h-24 max-w-7xl items-center justify-between px-6'>
                 {/* Logo */}
-                <Link to="/" className="shrink-0">
+                <NavLink to="/" className="shrink-0">
                     <img src={logo} alt="TeaMango" className="h-16 w-auto" />
-                </Link>
+                </NavLink>
 
                 {/* Menu */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-semibold uppercase tracking-wide">
-                    <Link to="/" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Trang chủ</Link>
-                    <Link to="/menu" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Menu</Link>
-                    <Link to="/products" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Sản phẩm</Link>
-                    <Link to="/location" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Vị trí</Link>
-                    <Link to="/news" className="nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white">Tin tức</Link>
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
+                    >
+                        Trang chủ
+                    </NavLink>
+
+                    <NavLink
+                        to="/menu"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
+                    >
+                        Menu
+                    </NavLink>
+
+                    <NavLink
+                        to="/products"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
+                    >
+                        Sản phẩm
+                    </NavLink>
+
+                    <NavLink
+                        to="/location"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
+                    >
+                        Vị trí
+                    </NavLink>
+
+                    <NavLink
+                        to="/news"
+                        className={({ isActive }) =>
+                            `inline-block text-sm font-semibold uppercase tracking-wide transition
+     ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`
+                        }
+                    >
+                        Tin tức
+                    </NavLink>
                 </nav>
 
                 {/* Icons */}
-                <div className="flex items-center gap-4 relative">
-                    <img src="https://flagcdn.com/w40/vn.png" alt="VN" className="h-5 w-auto rounded-sm" />
+                <div className='flex items-center gap-4'>
+                    <img
+                        src='https://flagcdn.com/w40/vn.png'
+                        alt='VN'
+                        className='h-5 w-auto rounded-sm'
+                    />
+
+                    <i className='fa-brands fa-facebook-f nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white text-lg cursor-pointer' />
 
                     {/* ===== AUTH ===== */}
                     {!user ? (
                         <div className="hidden md:flex items-center gap-3">
-                            <Link to="/login" className="text-white/80 hover:text-white text-sm font-semibold transition hover:-translate-y-0.5">
+                            <NavLink to="/login" className="text-white/80 hover:text-white text-sm font-semibold transition hover:-translate-y-0.5">
                                 Đăng nhập
-                            </Link>
-                            <Link to="/register" className="bg-white text-black px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-amber-400 transition transform hover:scale-105">
+                            </NavLink>
+                            <NavLink to="/register" className="bg-white text-black px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-amber-400 transition transform hover:scale-105">
                                 Đăng ký
-                            </Link>
+                            </NavLink>
                         </div>
                     ) : (
                         <div className="relative group flex items-center gap-3 cursor-pointer">
@@ -65,16 +115,16 @@ export default function Header({ user, setUser }) {
                                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tài khoản</p>
                                     </div>
                                     
-                                    <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                                    <NavLink to="/profile" className="block px-4 py-2 hover:bg-gray-100 flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                         Hồ sơ của tôi
-                                    </Link>
+                                    </NavLink>
 
                                     {user.role === 'ADMIN' && (
-                                        <Link to="/admin/products" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition border-t border-gray-50">
+                                        <NavLink to="/admin/products" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition border-t border-gray-50">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                             Quản lý cửa hàng
-                                        </Link>
+                                        </NavLink>
                                     )}
 
                                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition border-t border-gray-50">

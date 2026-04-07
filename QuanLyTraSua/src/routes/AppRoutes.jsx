@@ -1,15 +1,16 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import PageLoader from '../components/ui/PageLoader';
+
 import MainLayout from '../layout/MainLayout';
 import ProductList from '../Component/ProductList';
 import Login from '../Component/page/Login';
 import Register from '../Component/page/Register';
 import Profile from '../Component/page/Profile';
-import Location from '../Component/page/Location';
 import News from '../Component/page/News';
+import PageLoader from '../Component/ui/PageLoader';
 import Menu from '../Component/Menu';
 import ProductManagement from '../Component/page/ProductManagement';
+import Location from '../Component/page/Location';
 
 const Home = lazy(() => import('../Component/HomepageClient/Home.jsx'));
 

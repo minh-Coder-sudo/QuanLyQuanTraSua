@@ -1,114 +1,106 @@
 [
-  {
-    "name": "Trà sữa trân châu đường đen",
-    "slug": "ts-tran-chau-duong-den",
-    "categorySlug": "tra-sua",
-    "description": "Béo - thơm - đậm vị đường đen.",
-    "image": "https://picsum.photos/seed/ts1/600/600",
-    "basePrice": 35000,
-    "sizes": [
-      { "code": "S", "label": "Small", "extra": 0 },
-      { "code": "M", "label": "Medium", "extra": 5000 },
-      { "code": "L", "label": "Large", "extra": 10000 }
-    ],
-    "toppings": [
-      { "code": "PEARL", "name": "Trân châu đen", "price": 7000 },
-      { "code": "CHEESE", "name": "Kem cheese", "price": 10000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  },
-  {
-    "name": "Trà sữa matcha",
-    "slug": "ts-matcha",
-    "categorySlug": "tra-sua",
-    "description": "Matcha thơm đậm, dễ uống.",
-    "image": "https://picsum.photos/seed/ts2/600/600",
-    "basePrice": 42000,
-    "sizes": [
-      { "code": "S", "label": "Small", "extra": 0 },
-      { "code": "M", "label": "Medium", "extra": 5000 },
-      { "code": "L", "label": "Large", "extra": 10000 }
-    ],
-    "toppings": [
-      { "code": "PEARL", "name": "Trân châu đen", "price": 7000 },
-      { "code": "PUDDING", "name": "Pudding trứng", "price": 8000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  },
-  {
-    "name": "Trà đào cam sả",
-    "slug": "tra-dao-cam-sa",
-    "categorySlug": "tra-trai-cay",
-    "description": "Thanh mát, thơm sả.",
-    "image": "https://picsum.photos/seed/ttc1/600/600",
-    "basePrice": 39000,
-    "sizes": [
-      { "code": "M", "label": "Medium", "extra": 0 },
-      { "code": "L", "label": "Large", "extra": 8000 }
-    ],
-    "toppings": [
-      { "code": "JELLY", "name": "Thạch trái cây", "price": 7000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  },
-  {
-    "name": "Trà vải",
-    "slug": "tra-vai",
-    "categorySlug": "tra-trai-cay",
-    "description": "Vị vải thơm, uống cực đã.",
-    "image": "https://picsum.photos/seed/ttc2/600/600",
-    "basePrice": 38000,
-    "sizes": [
-      { "code": "M", "label": "Medium", "extra": 0 },
-      { "code": "L", "label": "Large", "extra": 8000 }
-    ],
-    "toppings": [
-      { "code": "JELLY", "name": "Thạch trái cây", "price": 7000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  },
-  {
-    "name": "Sữa chua dâu",
-    "slug": "sua-chua-dau",
-    "categorySlug": "sua-chua",
-    "description": "Chua nhẹ, thơm dâu.",
-    "image": "https://picsum.photos/seed/sc1/600/600",
-    "basePrice": 45000,
-    "sizes": [
-      { "code": "M", "label": "Medium", "extra": 0 },
-      { "code": "L", "label": "Large", "extra": 7000 }
-    ],
-    "toppings": [
-      { "code": "FRUIT", "name": "Trái cây mix", "price": 10000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  },
-  {
-    "name": "Sữa chua nếp cẩm",
-    "slug": "sua-chua-nep-cam",
-    "categorySlug": "sua-chua",
-    "description": "Bùi nếp cẩm, ngon no.",
-    "image": "https://picsum.photos/seed/sc2/600/600",
-    "basePrice": 47000,
-    "sizes": [
-      { "code": "M", "label": "Medium", "extra": 0 },
-      { "code": "L", "label": "Large", "extra": 7000 }
-    ],
-    "toppings": [
-      { "code": "PUDDING", "name": "Pudding trứng", "price": 8000 }
-    ],
-    "sugarLevels": [0, 30, 50, 70, 100],
-    "iceLevels": [0, 30, 50, 70, 100],
-    "isActive": true
-  }
+    {
+        "name": "Trà sữa trân châu đường đen",
+        "slug": "ts-tran-chau-duong-den",
+        "categorySlug": "tra-sua",
+        "description": "Béo - thơm - đậm vị đường đen.",
+        "image": "https://picsum.photos/seed/ts1/600/600",
+        "basePrice": 35000,
+        "sizes": [
+            { "code": "S", "label": "Small", "extra": 0 },
+            { "code": "M", "label": "Medium", "extra": 5000 },
+            { "code": "L", "label": "Large", "extra": 10000 }
+        ],
+        "toppings": [
+            { "code": "PEARL", "name": "Trân châu đen", "price": 7000 },
+            { "code": "CHEESE", "name": "Kem cheese", "price": 10000 }
+        ],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    },
+    {
+        "name": "Trà sữa matcha",
+        "slug": "ts-matcha",
+        "categorySlug": "tra-sua",
+        "description": "Matcha thơm đậm, dễ uống.",
+        "image": "https://picsum.photos/seed/ts2/600/600",
+        "basePrice": 42000,
+        "sizes": [
+            { "code": "S", "label": "Small", "extra": 0 },
+            { "code": "M", "label": "Medium", "extra": 5000 },
+            { "code": "L", "label": "Large", "extra": 10000 }
+        ],
+        "toppings": [
+            { "code": "PEARL", "name": "Trân châu đen", "price": 7000 },
+            { "code": "PUDDING", "name": "Pudding trứng", "price": 8000 }
+        ],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    },
+    {
+        "name": "Trà đào cam sả",
+        "slug": "tra-dao-cam-sa",
+        "categorySlug": "tra-trai-cay",
+        "description": "Thanh mát, thơm sả.",
+        "image": "https://picsum.photos/seed/ttc1/600/600",
+        "basePrice": 39000,
+        "sizes": [
+            { "code": "M", "label": "Medium", "extra": 0 },
+            { "code": "L", "label": "Large", "extra": 8000 }
+        ],
+        "toppings": [{ "code": "JELLY", "name": "Thạch trái cây", "price": 7000 }],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    },
+    {
+        "name": "Trà vải",
+        "slug": "tra-vai",
+        "categorySlug": "tra-trai-cay",
+        "description": "Vị vải thơm, uống cực đã.",
+        "image": "https://picsum.photos/seed/ttc2/600/600",
+        "basePrice": 38000,
+        "sizes": [
+            { "code": "M", "label": "Medium", "extra": 0 },
+            { "code": "L", "label": "Large", "extra": 8000 }
+        ],
+        "toppings": [{ "code": "JELLY", "name": "Thạch trái cây", "price": 7000 }],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    },
+    {
+        "name": "Sữa chua dâu",
+        "slug": "sua-chua-dau",
+        "categorySlug": "sua-chua",
+        "description": "Chua nhẹ, thơm dâu.",
+        "image": "https://picsum.photos/seed/sc1/600/600",
+        "basePrice": 45000,
+        "sizes": [
+            { "code": "M", "label": "Medium", "extra": 0 },
+            { "code": "L", "label": "Large", "extra": 7000 }
+        ],
+        "toppings": [{ "code": "FRUIT", "name": "Trái cây mix", "price": 10000 }],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    },
+    {
+        "name": "Sữa chua nếp cẩm",
+        "slug": "sua-chua-nep-cam",
+        "categorySlug": "sua-chua",
+        "description": "Bùi nếp cẩm, ngon no.",
+        "image": "https://picsum.photos/seed/sc2/600/600",
+        "basePrice": 47000,
+        "sizes": [
+            { "code": "M", "label": "Medium", "extra": 0 },
+            { "code": "L", "label": "Large", "extra": 7000 }
+        ],
+        "toppings": [{ "code": "PUDDING", "name": "Pudding trứng", "price": 8000 }],
+        "sugarLevels": [0, 30, 50, 70, 100],
+        "iceLevels": [0, 30, 50, 70, 100],
+        "isActive": true
+    }
 ]
