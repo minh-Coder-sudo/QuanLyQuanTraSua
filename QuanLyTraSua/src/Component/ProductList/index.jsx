@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import BrownBobaTea from '../../assets/BrownBobaTea.png';
 import MatchaBoba from '../../assets/MatchaBoba.png';
 import PastelHuesBoba from '../../assets/PastelHuesBoba.png';
@@ -8,7 +8,6 @@ import VibrantBoba from '../../assets/VibrantBoba.png';
 import ProductItem from '../ProductItem';
 import '../../css/Product.css';
 import ProductSlider from '../sections/home/product/ProductSlider';
-import ProductDetail from '../../Component/ProductDetail';
 const productList = [
     // ================= MILK TEA =================
     {
@@ -18,15 +17,6 @@ const productList = [
         category: 'Milk Tea',
         image: BrownBobaTea,
         description: 'Trà sữa đen truyền thống kết hợp trân châu đen dai.',
-        sizes: [
-            { code: 'S', label: 'Small', extra: 0 },
-            { code: 'M', label: 'Medium', extra: 5000 },
-            { code: 'L', label: 'Large', extra: 10000 },
-        ],
-        toppings: [
-            { code: 'PEARL', name: 'Trân châu đen', price: 7000 },
-            { code: 'CHEESE', name: 'Kem cheese', price: 10000 },
-        ],
     },
     {
         id: 2,
@@ -109,17 +99,15 @@ const productList = [
 ];
 
 function ProductList() {
-    const [selectedProduct, setselectedProduct] = useState(null);
     return (
         <div className="mt-8">
             <ProductSlider />
             <h1 className="text-2xl mt-24 ml-12 font-bold text-orange-600">Danh sách sản phẩm</h1>
             <div className="product-list">
                 {productList.map((product) => (
-                    <ProductItem key={product.id} {...product} onViewDetail={() => setselectedProduct(product)} />
+                    <ProductItem key={product.id} {...product} />
                 ))}
             </div>
-            {selectedProduct && <ProductDetail product={selectedProduct} onClose={() => setselectedProduct(null)} />}
         </div>
     );
 }

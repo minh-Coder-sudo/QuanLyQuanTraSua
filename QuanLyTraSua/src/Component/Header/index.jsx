@@ -2,10 +2,10 @@ import React from 'react';
 import logo from '../../assets/logo.png';
 import { NavLink } from 'react-router-dom';
 
-export default function Header({ user, setUser }) {
+export default function Header() {
     return (
-        <header className="headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10">
-            <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+        <header className='headerpage fixed inset-x-0 top-0 z-50 bg-black/95 backdrop-blur border-b border-white/10'>
+            <div className='mx-auto flex h-24 max-w-7xl items-center justify-between px-6'>
                 {/* Logo */}
                 <NavLink to="/" className="shrink-0">
                     <img src={logo} alt="TeaMango" className="h-16 w-auto" />
@@ -65,11 +65,14 @@ export default function Header({ user, setUser }) {
                 </nav>
 
                 {/* Icons */}
-                <div className="flex items-center gap-4 relative">
-                    <img src="https://flagcdn.com/w40/vn.png" alt="VN" className="h-5 w-auto rounded-sm" />
+                <div className='flex items-center gap-4'>
+                    <img
+                        src='https://flagcdn.com/w40/vn.png'
+                        alt='VN'
+                        className='h-5 w-auto rounded-sm'
+                    />
 
-                    <i className="fa-brands fa-facebook-f nav-header hover:scale-110 transition-transform text-white/80 hover:text-white text-lg cursor-pointer" />
-                    <i className="fa-brands fa-instagram nav-header hover:scale-110 transition-transform text-white/80 hover:text-white text-lg cursor-pointer" />
+                    <i className='fa-brands fa-facebook-f nav-header hover:scale-110 transition-transform inline-block text-white/80 hover:text-white text-lg cursor-pointer' />
 
                     {/* ===== AUTH ===== */}
                     {!user ? (
