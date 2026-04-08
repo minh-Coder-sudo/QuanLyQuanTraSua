@@ -1,173 +1,55 @@
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ImgTraSua from '../../../../assets/ImgTraSua.jpg';
-import ImgTraSua1 from '../../../../assets/ImgTraSua1.webp';
-import ImgTraSua2 from '../../../../assets/ImgTraSua2.jpg';
-import ImgTraSua3 from '../../../../assets/ImgTraSua3.avif';
-import ImgTraSua4 from '../../../../assets/ImgTraSua4.jpg';
-import ImgTraTraiCay from '../../../../assets/ImgTraTraiCay.jpg';
-import ImgTraTraiCay1 from '../../../../assets/ImgTraTraiCay1.jpg';
-import ImgTraTraiCay2 from '../../../../assets/ImgTraTraiCay2.jpg';
-import ImgTraTraiCay3 from '../../../../assets/ImgTraTraiCay3.jpg';
-import ImgTraTraiCay4 from '../../../../assets/ImgTraTraiCay4.jpg';
-import ImgML from '../../../../assets/ImgML.jpg';
-import ImgML1 from '../../../../assets/ImgML1.jpg';
-import ImgML2 from '../../../../assets/ImgML2.webp';
-import ImgML3 from '../../../../assets/ImgML3.jpg';
-import ImgML4 from '../../../../assets/ImgML4.jpg';
-import ImgDaXay from '../../../../assets/ImgDaXay.jpg';
-import ImgDaXay1 from '../../../../assets/ImgDaXay1.jpg';
-import ImgDaXay2 from '../../../../assets/ImgDaXay2.jpg';
-import ImgDaXay3 from '../../../../assets/ImgDaXay3.jpg';
-import ImgDaXay4 from '../../../../assets/ImgDaXay4.jpg';
-import BrownBobaTea from '../../../../assets/BrownBobaTea.png';
-import MatchaBoba from '../../../../assets/MatchaBoba.png';
-import PastelHuesBoba from '../../../../assets/PastelHuesBoba.png';
-import PeachBoba from '../../../../assets/PeachBoba.png';
-import StrawberryBoba from '../../../../assets/StraberryBoba.png';
-import VibrantBoba from '../../../../assets/VibrantBoba.png';
-const menu = {
-    signature: [
-        {
-            name: 'Trà Sữa Trân Châu',
-            price: '39,000 đ',
-            img: BrownBobaTea,
-        },
-        {
-            name: 'Matcha Boba Latte',
-            price: '45,000 đ',
-            img: MatchaBoba,
-        },
-        {
-            name: 'Strawberry Boba Milk',
-            price: '45,000 đ',
-            img: StrawberryBoba,
-        },
-        {
-            name: 'Pastel Milk Tea',
-            price: '45,000 đ',
-            img: PastelHuesBoba,
-        },
-    ],
-
-    tea: [
-        {
-            name: 'Trà Xoài',
-            price: '38,000 đ',
-            img: ImgTraTraiCay,
-        },
-        {
-            name: 'Trà Đào Cam Sả',
-            price: '36,000 đ',
-            img: ImgTraTraiCay1,
-        },
-        {
-            name: 'Trà Đào',
-            price: '45,000 đ',
-            img: ImgTraTraiCay2,
-        },
-        {
-            name: 'Trà Dâu',
-            price: '45,000 đ',
-            img: ImgTraTraiCay3,
-        },
-        {
-            name: 'Trà Chanh',
-            price: '45,000 đ',
-            img: ImgTraTraiCay4,
-        },
-    ],
-
-    milktea: [
-        {
-            name: 'Classic Boba Milk Tea',
-            price: '39,000 đ',
-            img: ImgTraSua,
-        },
-        {
-            name: 'Trân Trâu Đường Đen',
-            price: '42,000 đ',
-            img: ImgTraSua1,
-        },
-        {
-            name: 'Oolong Milk Tea',
-            price: '45,000 đ',
-            img: ImgTraSua2,
-        },
-        {
-            name: 'Trà Sữa Thái Xanh',
-            price: '45,000 đ',
-            img: ImgTraSua3,
-        },
-        {
-            name: 'Trà Sữa Khoai Môn',
-            price: '45,000 đ',
-            img: ImgTraSua4,
-        },
-    ],
-
-    milk: [
-        {
-            name: 'Matcha Latte',
-            price: '39,000 đ',
-            img: ImgML,
-        },
-        {
-            name: 'Matcha Dâu',
-            price: '42,000 đ',
-            img: ImgML1,
-        },
-        {
-            name: 'Latte Việt Quốc',
-            price: '45,000 đ',
-            img: ImgML2,
-        },
-        {
-            name: 'Latte Ca Cao',
-            price: '45,000 đ',
-            img: ImgML3,
-        },
-        {
-            name: 'Latte Khoai Môn',
-            price: '45,000 đ',
-            img: ImgML4,
-        },
-    ],
-
-    frappe: [
-        {
-            name: 'Đá Xay Ca Cao',
-            price: '39,000 đ',
-            img: ImgDaXay,
-        },
-        {
-            name: 'Đá Xay Socola',
-            price: '42,000 đ',
-            img: ImgDaXay1,
-        },
-        {
-            name: 'Đá Xay Khoai Môn',
-            price: '45,000 đ',
-            img: ImgDaXay2,
-        },
-        {
-            name: 'Đá Xay Matcha',
-            price: '45,000 đ',
-            img: ImgDaXay3,
-        },
-        {
-            name: 'Đá Xay Sữa Chua',
-            price: '45,000 đ',
-            img: ImgDaXay4,
-        },
-    ],
-};
+import productService from '../../../../services/productService';
 
 export default function ProductSlider() {
     const sliderRef = useRef(null);
 
-    const [category, setCategory] = useState('milktea');
+    const [category, setCategory] = useState('signature');
     const [isPaused, setIsPaused] = useState(false);
+    const [allProducts, setAllProducts] = useState({
+        signature: [],
+        tea: [],
+        milktea: [],
+        milk: [],
+        frappe: [],
+    });
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const products = await productService.getProducts();
+                // Phân loại sản phẩm dựa trên Category Name hoặc ID
+                const categorized = {
+                    signature: [],
+                    tea: [],
+                    milktea: [],
+                    milk: [],
+                    frappe: [],
+                };
+
+                // --- BẮT ĐẦU PHÂN LOẠI DỮ LIỆU ---
+                // 1. Phân loại Món HOT dựa trên lượt thích (likes) cao nhất
+                const sortedByLikes = [...products].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+                categorized.signature = sortedByLikes.slice(0, 6);
+
+                // 2. Phân loại theo các danh mục khác
+                products.forEach((p) => {
+                    const catName = (p.category?.name || p.categorySlug || '').toLowerCase();
+                    
+                    if (catName.includes('trà sữa')) categorized.milktea.push(p);
+                    else if (catName.includes('trà trái cây')) categorized.tea.push(p);
+                    else if (catName.includes('matcha') || catName.includes('latte')) categorized.milk.push(p);
+                    else if (catName.includes('đá xay')) categorized.frappe.push(p);
+                });
+                
+                setAllProducts(categorized);
+            } catch (error) {
+                console.error('Lỗi nạp sản phẩm cho Slider:', error);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     const [isDown, setIsDown] = useState(false);
     const [startX, setStartX] = useState(0);
@@ -177,7 +59,9 @@ export default function ProductSlider() {
     const GAP = 40;
     const STEP = CARD_WIDTH + GAP;
 
-    const products = [...menu[category], ...menu[category], ...menu[category]];
+    // Use categorized products from state
+    const currentProducts = allProducts[category] || [];
+    const products = currentProducts.length > 0 ? [...currentProducts, ...currentProducts] : [];
 
     /* AUTO SLIDE */
 
@@ -330,7 +214,7 @@ export default function ProductSlider() {
                             <div className="absolute w-56 h-56 bg-orange-200 rounded-full blur-3xl opacity-40 mx-auto left-0 right-0"></div>
 
                             <img
-                                src={item.img}
+                                src={item.image}
                                 className="relative w-56 h-56 object-cover mx-auto rounded-full transition duration-500 group-hover:scale-110"
                             />
 
@@ -348,7 +232,9 @@ export default function ProductSlider() {
 
                             <h3 className="text-xl text-black font-bold">{item.name}</h3>
 
-                            <p className="text-orange-500 text-xl font-bold mt-2">{item.price}</p>
+                            <p className="text-orange-500 text-xl font-bold mt-2">
+                                {item.basePrice?.toLocaleString()} đ
+                            </p>
                         </div>
                     ))}
                 </div>

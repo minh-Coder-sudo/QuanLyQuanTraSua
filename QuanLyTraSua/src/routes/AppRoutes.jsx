@@ -9,6 +9,7 @@ import Profile from '../Component/page/Profile';
 import News from '../Component/page/News';
 import PageLoader from '../Component/ui/PageLoader';
 import Menu from '../Component/Menu';
+import ProductManagement from '../Component/page/ProductManagement';
 import Location from '../Component/page/Location';
 
 const Home = lazy(() => import('../Component/HomepageClient/Home.jsx'));
@@ -18,16 +19,24 @@ export default function AppRoutes({ user, setUser }) {
         <Suspense fallback={<PageLoader />}>
             <Routes>
                 <Route element={<MainLayout user={user} setUser={setUser} />}>
-                    <Route path='/' element={<Home />} />
-                    {/* Mặc định vào sẽ chuyển đến trang login */}
-                    <Route path='/Home' element={<Home />} />
-                    <Route path='/login' element={<Login />} />
-                    <Route path='/register' element={<Register />} />
-                    <Route path='/profile' element={<Profile />} />
-                    <Route path='/menu' element={<Menu />} />
-                    <Route path='/location' element={<Location />} />
-                    <Route path='/news' element={<News />} />
-                    <Route path='/products' element={<ProductList />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/Home" element={<Home />} />
+                    <Route path="/login" element={<Login setUser={setUser} />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route 
+                        path="/profile" 
+                        element={user ? <Profile user={user} setUser={setUser} /> : <Navigate to="/login" />} 
+                    />
+                    <Route path="/menu" element={<Menu />} />
+                    <Route path="/location" element={<Location />} />
+                    <Route path="/news" element={<News />} />
+                    <Route path="/products" element={<ProductList />} />
+                    
+                    {/* Admin Routes */}
+                    <Route 
+                        path="/admin/products" 
+                        element={user?.role === 'ADMIN' ? <ProductManagement /> : <Navigate to="/" />} 
+                    />
                 </Route>
             </Routes>
         </Suspense>
