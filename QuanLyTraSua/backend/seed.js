@@ -27,7 +27,7 @@ const IMAGE_MAP = {
     'Trà sữa Matcha sữa tươi': 'MatchaBoba.png',
     'Trà sữa Ô long béo': 'PastelHuesBoba.png',
     'Trà sữa Khoai môn': 'TaroMilkBoba.png',
-    'Trà sữa Thái xanh': 'MatchaBoba.png',
+    'Trà sữa Thái xanh': 'ThaiXanhBoba.png',
 
     'Trà Đào Cam Sả': 'PeachBoba.png',
     'Trà Vải Nhiệt Đới': 'MixBoba.png',
@@ -36,14 +36,14 @@ const IMAGE_MAP = {
     'Trà Chanh Dây Hạt Chia': 'LemonLimeTea.png',
 
     'Matcha Latte Nguyên Bản': 'MatchaBoba.png',
-    'Matcha Đậu Đỏ': 'MatchaBoba.png',
+    'Matcha Đậu Đỏ': 'MatchaDauDo.png',
     'Sữa Chua Dâu Tây': 'StraberryBoba.png',
     'Sữa Chua Xoài Chín': 'MangoBubbleBoba.png',
-    'Cacao Latte Hạt Dẻ': 'ChoocolateMilkBoba.png',
+    'Cacao Latte Hạt Dẻ': 'ChoocolateHatDe.png',
 
     'Oreo Choco Đá Xay': 'ChoocolateMilkBoba.png',
     'Matcha Cookie Đá Xay': 'MatchaBoba.png',
-    'Cafe Mocha Đá Xay': 'ChoocolateMilkBoba.png',
+    'Cafe Mocha Đá Xay': 'MochaDaXay.png',
     'Socola Bạc Hà Đá Xay': 'MintMilkTeaBoba.png',
     'Dâu Tây Kem Phô Mai Đá Xay': 'StraberryBoba.png',
 };
