@@ -12,7 +12,7 @@ function ProductItem({ name, basePrice = 0, image, description, onViewDetail }) 
                 </button>
             </div>
 
-            <img src={image} alt={name} width="120" className="product-image" />
+            <img src={`http://localhost:5000${image}`} alt={name} width="120" className="product-image" />
         </div>
     );
 }

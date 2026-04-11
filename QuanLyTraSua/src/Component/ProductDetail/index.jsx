@@ -19,35 +19,50 @@ function ProductDetail({ product, onClose }) {
     if (!product) return null;
 
     const handleDecrease = () => {
-        if (quantity > 1) setQuantity(quantity - 1);
+        setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
     };
 
     const handleIncrease = () => {
-        setQuantity(quantity + 1);
+        setQuantity((prev) => prev + 1);
     };
 
     const formatPrice = (price) => {
-        return price.toLocaleString('vi-VN') + 'đ';
+        return `${(Number(price) || 0).toLocaleString('vi-VN')}đ`;
+    };
+
+    const getImageUrl = (image) => {
+        if (!image) return 'https://via.placeholder.com/500x500?text=No+Image';
+
+        if (image.startsWith('http://') || image.startsWith('https://')) {
+            return image;
+        }
+
+        return `http://localhost:5000${image}`;
     };
 
     const handleToggleTopping = (topping) => {
+        if (!topping?.code) return;
+
         const isExist = selectedToppings.some((item) => item.code === topping.code);
 
         if (isExist) {
-            setSelectedToppings(selectedToppings.filter((item) => item.code !== topping.code));
+            setSelectedToppings((prev) => prev.filter((item) => item.code !== topping.code));
         } else {
-            setSelectedToppings([...selectedToppings, topping]);
+            setSelectedToppings((prev) => [...prev, topping]);
         }
     };
 
     const toppingTotal = useMemo(() => {
-        return selectedToppings.reduce((total, item) => total + item.price, 0);
+        return selectedToppings.reduce((total, item) => total + (Number(item?.price) || 0), 0);
     }, [selectedToppings]);
 
-    const sizeExtra = selectedSize?.extra || 0;
+    const basePrice = Number(product?.basePrice) || 0;
+    const sizeExtra = Number(selectedSize?.extra) || 0;
 
-    const finalUnitPrice = product.price + sizeExtra + toppingTotal;
+    const finalUnitPrice = basePrice + sizeExtra + toppingTotal;
     const totalPrice = finalUnitPrice * quantity;
+
+    const imageUrl = getImageUrl(product?.image);
 
     return (
         <div
@@ -67,37 +82,43 @@ function ProductDetail({ product, onClose }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     <div className="flex items-center justify-center bg-[#f7f3ee] p-6">
-                        <img src={product.image} alt={product.name} className="max-h-[450px] w-full object-contain" />
+                        <img
+                            src={imageUrl}
+                            alt={product?.name || 'product'}
+                            className="max-h-[450px] w-full object-contain"
+                        />
                     </div>
 
                     <div className="max-h-[90vh] overflow-y-auto p-8">
                         <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-[#8b5e3c]">
-                            {product.category}
+                            {product?.category?.name || 'Danh mục sản phẩm'}
                         </p>
 
-                        <h2 className="mb-4 text-3xl font-bold text-gray-900">{product.name}</h2>
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900">{product?.name || 'Tên sản phẩm'}</h2>
 
                         <p className="mb-4 text-2xl font-bold text-[#c67c4e]">{formatPrice(finalUnitPrice)}</p>
 
-                        <p className="mb-6 leading-7 text-gray-600">{product.description}</p>
+                        <p className="mb-6 leading-7 text-gray-600">
+                            {product?.description || 'Chưa có mô tả cho sản phẩm này.'}
+                        </p>
 
                         <div className="mb-6">
                             <h3 className="mb-2 text-sm font-semibold uppercase text-gray-500">Điểm nổi bật</h3>
                             <ul className="space-y-2 text-gray-700">
                                 <li>• Nguyên liệu tươi ngon, pha chế mỗi ngày</li>
-                                <li>• Vị trà đậm, sữa béo hài hòa</li>
-                                <li>• Phù hợp uống lạnh, thêm topping tùy chọn</li>
+                                <li>• Có thể tùy chọn size và topping theo sở thích</li>
+                                <li>• Hương vị đậm đà, phù hợp để thưởng thức lạnh</li>
                             </ul>
                         </div>
 
-                        {/* SIZE */}
-                        {product.sizes && product.sizes.length > 0 && (
+                        {product?.sizes?.length > 0 && (
                             <div className="mb-6">
                                 <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500">Chọn size</h3>
 
                                 <div className="flex flex-wrap gap-3">
                                     {product.sizes.map((size) => {
                                         const isActive = selectedSize?.code === size.code;
+                                        const extra = Number(size?.extra) || 0;
 
                                         return (
                                             <button
@@ -110,7 +131,11 @@ function ProductDetail({ product, onClose }) {
                                                 }`}
                                             >
                                                 {size.label}
-                                                {size.extra > 0 ? ` (+${formatPrice(size.extra)})` : ' (+0đ)'}
+                                                {extra > 0
+                                                    ? ` (+${formatPrice(extra)})`
+                                                    : extra < 0
+                                                      ? ` (-${formatPrice(Math.abs(extra))})`
+                                                      : ' (+0đ)'}
                                             </button>
                                         );
                                     })}
@@ -118,8 +143,7 @@ function ProductDetail({ product, onClose }) {
                             </div>
                         )}
 
-                        {/* TOPPING */}
-                        {product.toppings && product.toppings.length > 0 && (
+                        {product?.toppings?.length > 0 && (
                             <div className="mb-6">
                                 <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500">Chọn topping</h3>
 
@@ -129,7 +153,7 @@ function ProductDetail({ product, onClose }) {
 
                                         return (
                                             <label
-                                                key={topping.code}
+                                                key={topping._id || topping.code}
                                                 className="flex cursor-pointer items-center justify-between rounded-2xl border border-gray-200 px-4 py-3 hover:bg-gray-50"
                                             >
                                                 <div className="flex items-center gap-3">
@@ -152,7 +176,6 @@ function ProductDetail({ product, onClose }) {
                             </div>
                         )}
 
-                        {/* QUANTITY */}
                         <div className="mb-6 flex items-center gap-4">
                             <span className="font-medium text-gray-700">Số lượng:</span>
 
@@ -175,19 +198,24 @@ function ProductDetail({ product, onClose }) {
                             </div>
                         </div>
 
-                        {/* PRICE SUMMARY */}
                         <div className="mb-6 rounded-2xl bg-[#f7f3ee] p-4">
                             <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500">Tóm tắt đơn hàng</h3>
 
                             <div className="space-y-2 text-sm text-gray-700">
                                 <div className="flex justify-between">
                                     <span>Giá gốc</span>
-                                    <span>{formatPrice(product.price)}</span>
+                                    <span>{formatPrice(basePrice)}</span>
                                 </div>
 
                                 <div className="flex justify-between">
                                     <span>Phụ thu size</span>
-                                    <span>+{formatPrice(sizeExtra)}</span>
+                                    <span>
+                                        {sizeExtra > 0
+                                            ? `+${formatPrice(sizeExtra)}`
+                                            : sizeExtra < 0
+                                              ? `-${formatPrice(Math.abs(sizeExtra))}`
+                                              : '0đ'}
+                                    </span>
                                 </div>
 
                                 <div className="flex justify-between">
