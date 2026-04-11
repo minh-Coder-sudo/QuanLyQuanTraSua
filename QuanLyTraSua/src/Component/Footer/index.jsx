@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '@/assets/logo.png';
+import { NavLink } from 'react-router-dom';
 
 function Footer() {
     return (
@@ -9,21 +10,21 @@ function Footer() {
             <div className="flex flex-col mt-4">
                 <h3 className="mb-6 text-2xl text-orange-500 font-bold uppercase tracking-widest">Giới thiệu</h3>
                 <div className="flex flex-row flex-wrap gap-x-12 gap-y-4">
-                    <a className="text-white/80 hover:text-orange-500 text-xl transition" href="#">
+                    <NavLink to="/" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Trang chủ
-                    </a>
-                    <a className="text-white/80 hover:text-orange-500 text-xl transition" href="#">
+                    </NavLink>
+                    <NavLink to="/menu" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Menu
-                    </a>
-                    <a className="text-white/80 hover:text-orange-500 text-xl transition" href="#">
+                    </NavLink>
+                    <NavLink to="/products" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Sản phẩm
-                    </a>
-                    <a className="text-white/80 hover:text-orange-500 text-xl transition" href="#">
+                    </NavLink>
+                    <NavLink to="/location" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Vị trí
-                    </a>
-                    <a href="/news" className="text-white/80 hover:text-orange-500 text-xl transition">
+                    </NavLink>
+                    <NavLink to="/news" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Tin tức
-                    </a>
+                    </NavLink>
                 </div>
             </div>
             <div className="flex flex-col mt-4 space-y-4">
@@ -36,15 +37,17 @@ function Footer() {
                 </h3>
             </div>
             <div className="flex flex-col mt-4 space-y-4">
-                <h3 className="mb-6 text-2xl text-orange-500 font-bold uppercase tracking-widest">© 2025 THE TEA MONGO</h3>
+                <h3 className="mb-6 text-2xl text-orange-500 font-bold uppercase tracking-widest">
+                    © 2025 THE TEA MONGO
+                </h3>
                 <h3 className="text-white/80 text-xl leading-relaxed">
-                    <span className="text-orange-500 font-bold">Địa chỉ:</span> 12 Nguyễn Văn Bảo, Phường 4, Gò
-                    Vấp, Thành phố Hồ Chí Minh.
+                    <span className="text-orange-500 font-bold">Địa chỉ:</span> 12 Nguyễn Văn Bảo, Phường 4, Gò Vấp,
+                    Thành phố Hồ Chí Minh.
                 </h3>
                 <div className="flex gap-8 mt-6">
                     <span className=" text-orange-500 font-bold text-xl">Mạng xã hội: </span>
-                    <i className="fa-brands fa-facebook-f text-white/80 hover:text-white text-3xl cursor-pointer" />
-                    <i className="fa-brands fa-instagram text-white/80 hover:text-white text-3xl cursor-pointer" />
+                    <i className="fa-brands fa-facebook-f text-white/80 hover:text-white text-3xl cursor-pointer mt-2" />
+                    <i className="fa-brands fa-instagram text-white/80 hover:text-white text-3xl cursor-pointer mt-2" />
                 </div>
             </div>
         </footer>
