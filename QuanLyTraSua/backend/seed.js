@@ -9,10 +9,10 @@ import bcrypt from 'bcryptjs';
 dotenv.config();
 
 const CATEGORIES = [
-    { slug: 'tra-sua', name: 'Trà sữa' },
-    { slug: 'tra-trai-cay', name: 'Trà trái cây' },
-    { slug: 'matcha-latte', name: 'Matcha / Latte' },
-    { slug: 'da-xay', name: 'Đá xay' },
+    { slug: 'tra-sua', name: 'Trà sữa', image: '/uploads/BrownBobaTea.png' },
+    { slug: 'tra-trai-cay', name: 'Trà trái cây', image: '/uploads/PeachBoba.png' },
+    { slug: 'matcha-latte', name: 'Matcha / Latte', image: '/uploads/MatchaBoba.png' },
+    { slug: 'da-xay', name: 'Đá xay', image: '/uploads/MochaDaXay.png' },
 ];
 
 const TOPPINGS = [
