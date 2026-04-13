@@ -36,13 +36,13 @@ export default function ProductSlider() {
                 // 2. Phân loại theo các danh mục khác
                 products.forEach((p) => {
                     const catName = (p.category?.name || p.categorySlug || '').toLowerCase();
-                    
+
                     if (catName.includes('trà sữa')) categorized.milktea.push(p);
                     else if (catName.includes('trà trái cây')) categorized.tea.push(p);
                     else if (catName.includes('matcha') || catName.includes('latte')) categorized.milk.push(p);
                     else if (catName.includes('đá xay')) categorized.frappe.push(p);
                 });
-                
+
                 setAllProducts(categorized);
             } catch (error) {
                 console.error('Lỗi nạp sản phẩm cho Slider:', error);
@@ -214,7 +214,7 @@ export default function ProductSlider() {
                             <div className="absolute w-56 h-56 bg-orange-200 rounded-full blur-3xl opacity-40 mx-auto left-0 right-0"></div>
 
                             <img
-                                src={item.image}
+                                src={`http://localhost:5000${item.image}`}
                                 className="relative w-56 h-56 object-cover mx-auto rounded-full transition duration-500 group-hover:scale-110"
                             />
 
