@@ -1,10 +1,10 @@
 import express from 'express';
 import { getStatsSummary, getRevenueChart } from '../controllers/statsController.js';
-import { protect, admin } from '../middleware/authMiddleware.js';
+import { protect, admin, staff } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/summary', protect, admin, getStatsSummary);
-router.get('/revenue-chart', protect, admin, getRevenueChart);
+router.get('/summary', protect, staff, getStatsSummary);
+router.get('/revenue-chart', protect, staff, getRevenueChart);
 
 export default router;

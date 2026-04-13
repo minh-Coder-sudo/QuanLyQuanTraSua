@@ -26,14 +26,17 @@ export const protect = async (req, res, next) => {
 };
 
 export const admin = (req, res, next) => {
-  console.log('--- Kiểm tra quyền Admin ---');
-  console.log('User:', req.user?.username);
-  console.log('Role hiện tại:', req.user?.role);
-
   if (req.user && req.user.role === 'ADMIN') {
     next();
   } else {
-    console.log('❌ Từ chối: Không phải ADMIN');
     res.status(403).json({ message: 'Bạn không có quyền Admin để thực hiện hành động này!' });
   }
+};
+
+export const staff = (req, res, next) => {
+    if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'EMPLOYEE')) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Bạn không có quyền truy cập (Dành cho Nhân viên/Quản lý)!' });
+    }
 };
