@@ -1,14 +1,14 @@
 import express from 'express';
 import { createOrder, getOrders, updateOrderStatus } from '../controllers/orderController.js';
-import { protect, admin } from '../middleware/authMiddleware.js';
+import { protect, admin, staff } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/')
   .post(protect, createOrder)
-  .get(protect, admin, getOrders);
+  .get(protect, staff, getOrders);
 
 router.route('/:id/status')
-  .put(protect, admin, updateOrderStatus);
+  .put(protect, staff, updateOrderStatus);
 
 export default router;

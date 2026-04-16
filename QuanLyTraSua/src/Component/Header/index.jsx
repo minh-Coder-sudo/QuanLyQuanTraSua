@@ -138,7 +138,7 @@ export default function Header({ user, setUser }) {
                                         Hồ sơ của tôi
                                     </NavLink>
 
-                                    {user.role === 'ADMIN' && (
+                                    {(user.role === 'ADMIN' || user.role === 'EMPLOYEE') && (
                                         <NavLink
                                             to="/admin/products"
                                             className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition border-t border-gray-50"
@@ -158,6 +158,29 @@ export default function Header({ user, setUser }) {
                                                 />
                                             </svg>
                                             Quản lý cửa hàng
+                                        </NavLink>
+                                    )}
+
+                                    {user.role === 'ADMIN' && (
+                                        <NavLink
+                                            to="/admin/members"
+                                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition border-t border-gray-50"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-4 w-4"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                                                />
+                                            </svg>
+                                            Quản lý thành viên
                                         </NavLink>
                                     )}
 

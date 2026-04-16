@@ -11,6 +11,7 @@ import PageLoader from '../Component/ui/PageLoader';
 import Menu from '../Component/Menu';
 import ProductManagement from '../Component/page/ProductManagement';
 import Location from '../Component/page/Location';
+import MemberManagement from '../Component/page/MemberManagement';
 
 const Home = lazy(() => import('../Component/HomepageClient/Home.jsx'));
 
@@ -32,10 +33,14 @@ export default function AppRoutes({ user, setUser }) {
                     <Route path="/news" element={<News />} />
                     <Route path="/products" element={<ProductList />} />
                     
-                    {/* Admin Routes */}
+                    {/* Admin/Staff Routes */}
                     <Route 
                         path="/admin/products" 
-                        element={user?.role === 'ADMIN' ? <ProductManagement /> : <Navigate to="/" />} 
+                        element={(user?.role === 'ADMIN' || user?.role === 'EMPLOYEE') ? <ProductManagement /> : <Navigate to="/" />} 
+                    />
+                    <Route 
+                        path="/admin/members" 
+                        element={user?.role === 'ADMIN' ? <MemberManagement /> : <Navigate to="/" />} 
                     />
                 </Route>
             </Routes>
