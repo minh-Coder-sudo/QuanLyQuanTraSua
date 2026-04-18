@@ -338,7 +338,7 @@ function SizesEditor({ sizes, onChange }) {
                                     type="number"
                                     value={active.extra}
                                     onChange={(e) => setExtra(opt.code, e.target.value)}
-                                    className="w-24 border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400"
+                                    className="w-24 border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400 text-black"
                                     step={1000}
                                 />
                                 <span className="text-gray-400 text-xs">đ</span>
@@ -506,7 +506,7 @@ function ProductModal({ product, categories, onSave, onClose }) {
                                     required
                                     value={form.name}
                                     onChange={(e) => set('name', e.target.value)}
-                                    className="input w-full"
+                                    className="input w-full text-black placeholder:text-gray-400"
                                     placeholder="VD: Trà sữa trân châu..."
                                 />
                             </div>
@@ -515,7 +515,7 @@ function ProductModal({ product, categories, onSave, onClose }) {
                                 <select
                                     value={form.category}
                                     onChange={(e) => set('category', e.target.value)}
-                                    className="input w-full"
+                                    className="input w-full text-black"
                                 >
                                     <option value="">Chọn danh mục...</option>
                                     {categories.map((c) => (
@@ -536,7 +536,7 @@ function ProductModal({ product, categories, onSave, onClose }) {
                                     step={1000}
                                     value={form.basePrice}
                                     onChange={(e) => set('basePrice', e.target.value)}
-                                    className="input w-full"
+                                    className="input w-full text-black"
                                     placeholder="35000"
                                 />
                             </div>
@@ -545,7 +545,7 @@ function ProductModal({ product, categories, onSave, onClose }) {
                                 <textarea
                                     value={form.description}
                                     onChange={(e) => set('description', e.target.value)}
-                                    className="input w-full resize-none"
+                                    className="input w-full resize-none text-black"
                                     rows={2}
                                     placeholder="Mô tả ngắn về sản phẩm..."
                                 />
@@ -555,7 +555,7 @@ function ProductModal({ product, categories, onSave, onClose }) {
                                 <select
                                     value={form.status}
                                     onChange={(e) => set('status', e.target.value)}
-                                    className="input w-full"
+                                    className="input w-full text-black"
                                 >
                                     <option value="AVAILABLE">Còn hàng</option>
                                     <option value="OUT_OF_STOCK">Hết hàng</option>
@@ -698,7 +698,7 @@ function CategoryModal({ category, onSave, onClose }) {
                                         .replace(/[^\w-]+/g, ''),
                                 })
                             }
-                            className="input w-full"
+                            className="input w-full text-black"
                         />
                     </div>
                     <div>
@@ -709,7 +709,7 @@ function CategoryModal({ category, onSave, onClose }) {
                             required
                             value={form.slug}
                             onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                            className="input w-full"
+                            className="input w-full text-black"
                         />
                     </div>
                     <div>
@@ -733,7 +733,7 @@ function CategoryModal({ category, onSave, onClose }) {
                         <input
                             value={form.image}
                             onChange={(e) => setForm({ ...form, image: e.target.value })}
-                            className="input w-full"
+                            className="input w-full text-black"
                             placeholder="https://..."
                         />
                     </div>
@@ -1037,13 +1037,13 @@ export default function ProductManagement() {
                                                 value={search}
                                                 onChange={(e) => setSearch(e.target.value)}
                                                 placeholder="Tìm kiếm sản phẩm..."
-                                                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none"
+                                                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none text-black"
                                             />
                                         </div>
                                         <select
                                             value={catFilter}
                                             onChange={(e) => setCatFilter(e.target.value)}
-                                            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white outline-none"
+                                            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white outline-none text-black"
                                         >
                                             <option value="all">Tất cả danh mục</option>
                                             {categories.map((c) => (
@@ -1055,7 +1055,7 @@ export default function ProductManagement() {
                                         <select
                                             value={statusFilter}
                                             onChange={(e) => setStatusFilter(e.target.value)}
-                                            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white outline-none"
+                                            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white outline-none text-black"
                                         >
                                             <option value="all">Tất cả trạng thái</option>
                                             <option value="AVAILABLE">Còn hàng</option>
@@ -1117,7 +1117,7 @@ export default function ProductManagement() {
                                                                     {p.name}
                                                                 </td>
                                                                 <td className="px-4 py-4">
-                                                                    <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">
+                                                                    <span className="px-2 py-0.5 bg-gray-100 rounded text-xs text-black">
                                                                         {catName(p.category)}
                                                                     </span>
                                                                 </td>
@@ -1196,10 +1196,10 @@ export default function ProductManagement() {
                                     <table className="w-full text-sm text-left">
                                         <thead className="bg-gray-50 border-b">
                                             <tr>
-                                                <th className="px-6 py-4">Ảnh</th>
-                                                <th className="px-6 py-4">Tên danh mục</th>
-                                                <th className="px-6 py-4">Slug</th>
-                                                <th className="px-6 py-4 text-center">Thao tác</th>
+                                                <th className="px-6 py-4 text-black">Ảnh</th>
+                                                <th className="px-6 py-4 text-black">Tên danh mục</th>
+                                                <th className="px-6 py-4 text-black">Slug</th>
+                                                <th className="px-6 py-4 text-center text-black">Thao tác</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y">
