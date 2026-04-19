@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import Topping from '../models/Topping.js';
+import {saveBase64Image} from '../middleware/uploadMiddleware.js'
 
 // @desc    Lấy toàn bộ sản phẩm
 // @route   GET /api/products
@@ -45,6 +46,15 @@ export const getProductById = async (req, res) => {
 // @route   POST /api/products
 export const createProduct = async (req, res) => {
     try {
+        if (req.body.image && req.body.image.startsWith('data:image')) {
+            const imagePath = saveBase64Image(req.body.image);
+            req.body.image = imagePath;
+        }
+
+        const toppings = await Topping.find({
+         code: { $in: req.body.toppings } }
+        );
+        req.body.toppings = toppings.map(t =>t._id);
         const product = new Product(req.body);
         const createdProduct = await product.save();
 
