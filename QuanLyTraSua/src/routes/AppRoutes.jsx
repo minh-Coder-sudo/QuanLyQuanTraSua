@@ -10,6 +10,7 @@ import News from '../Component/page/News';
 import PageLoader from '../Component/ui/PageLoader';
 import Menu from '../Component/Menu';
 import ProductManagement from '../Component/page/ProductManagement';
+import MemberManagement from '../Component/page/MemberManagement';
 import Location from '../Component/page/Location';
 import Cart from '../Component/page/Cart';
 import PaymentSuccess from '../Component/page/PaymentSuccess';
@@ -23,11 +24,13 @@ export default function AppRoutes({ user, setUser }) {
                 <Route element={<MainLayout user={user} setUser={setUser} />}>
                     <Route path='/' element={<Home />} />
                     <Route path='/Home' element={<Home />} />
+
                     <Route
                         path='/login'
                         element={<Login setUser={setUser} />}
                     />
                     <Route path='/register' element={<Register />} />
+
                     <Route
                         path='/profile'
                         element={
@@ -38,22 +41,37 @@ export default function AppRoutes({ user, setUser }) {
                             )
                         }
                     />
+
                     <Route path='/menu' element={<Menu />} />
                     <Route path='/location' element={<Location />} />
                     <Route path='/news' element={<News />} />
                     <Route path='/products' element={<ProductList />} />
-                    {/* 🛒 CART */}
+
+                    {/* Cart */}
                     <Route path='/cart' element={<Cart />} />
                     <Route
                         path='/payment-success'
                         element={<PaymentSuccess />}
                     />
-                    {/* Admin Routes */}
+
+                    {/* Admin / Staff Routes */}
                     <Route
                         path='/admin/products'
                         element={
-                            user?.role === 'ADMIN' ? (
+                            user?.role === 'ADMIN' ||
+                            user?.role === 'EMPLOYEE' ? (
                                 <ProductManagement />
+                            ) : (
+                                <Navigate to='/' />
+                            )
+                        }
+                    />
+
+                    <Route
+                        path='/admin/members'
+                        element={
+                            user?.role === 'ADMIN' ? (
+                                <MemberManagement />
                             ) : (
                                 <Navigate to='/' />
                             )
