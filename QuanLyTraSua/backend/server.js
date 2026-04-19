@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import paymentRouter from './routes/paymentRoutes.js';
 import path from 'path';
 // Load environment variables
 dotenv.config();
@@ -25,7 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 mongoose
     .connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
+        useUnifiedTopology: true
     })
     .then(() => console.log('✅ Kết nối MongoDB thành công!'))
     .catch((err) => console.error('❌ Lỗi kết nối MongoDB:', err));
@@ -36,7 +37,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/stats', statsRoutes);
-
+app.use('/api/payment', paymentRouter);
 // Base Route
 app.get('/', (req, res) => {
     res.send('API của QuanLyTraSua đang chạy...');
