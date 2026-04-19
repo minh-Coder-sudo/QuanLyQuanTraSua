@@ -9,6 +9,7 @@
     "seed": "node seed.js"
   },
   "dependencies": {
+    "@payos/node": "^1.0.6",
     "bcryptjs": "^3.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
