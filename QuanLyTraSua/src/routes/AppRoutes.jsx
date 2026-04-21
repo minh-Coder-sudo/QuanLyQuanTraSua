@@ -5,6 +5,7 @@ import MainLayout from '../layout/MainLayout';
 import ProductList from '../Component/ProductList';
 import Login from '../Component/page/Login';
 import Register from '../Component/page/Register';
+import ForgetPassword from '../Component/page/ForgetPassword';
 import Profile from '../Component/page/Profile';
 import News from '../Component/page/News';
 import PageLoader from '../Component/ui/PageLoader';
@@ -22,60 +23,42 @@ export default function AppRoutes({ user, setUser }) {
         <Suspense fallback={<PageLoader />}>
             <Routes>
                 <Route element={<MainLayout user={user} setUser={setUser} />}>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/Home' element={<Home />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/Home" element={<Home />} />
+
+                    <Route path="/login" element={<Login setUser={setUser} />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgetPassword />} />
 
                     <Route
-                        path='/login'
-                        element={<Login setUser={setUser} />}
-                    />
-                    <Route path='/register' element={<Register />} />
-
-                    <Route
-                        path='/profile'
-                        element={
-                            user ? (
-                                <Profile user={user} setUser={setUser} />
-                            ) : (
-                                <Navigate to='/login' />
-                            )
-                        }
+                        path="/profile"
+                        element={user ? <Profile user={user} setUser={setUser} /> : <Navigate to="/login" />}
                     />
 
-                    <Route path='/menu' element={<Menu />} />
-                    <Route path='/location' element={<Location />} />
-                    <Route path='/news' element={<News />} />
-                    <Route path='/products' element={<ProductList />} />
+                    <Route path="/menu" element={<Menu />} />
+                    <Route path="/location" element={<Location />} />
+                    <Route path="/news" element={<News />} />
+                    <Route path="/products" element={<ProductList />} />
 
                     {/* Cart */}
-                    <Route path='/cart' element={<Cart />} />
-                    <Route
-                        path='/payment-success'
-                        element={<PaymentSuccess />}
-                    />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/payment-success" element={<PaymentSuccess />} />
 
                     {/* Admin / Staff Routes */}
                     <Route
-                        path='/admin/products'
+                        path="/admin/products"
                         element={
-                            user?.role === 'ADMIN' ||
-                            user?.role === 'EMPLOYEE' ? (
+                            user?.role === 'ADMIN' || user?.role === 'EMPLOYEE' ? (
                                 <ProductManagement />
                             ) : (
-                                <Navigate to='/' />
+                                <Navigate to="/" />
                             )
                         }
                     />
 
                     <Route
-                        path='/admin/members'
-                        element={
-                            user?.role === 'ADMIN' ? (
-                                <MemberManagement />
-                            ) : (
-                                <Navigate to='/' />
-                            )
-                        }
+                        path="/admin/members"
+                        element={user?.role === 'ADMIN' ? <MemberManagement /> : <Navigate to="/" />}
                     />
                 </Route>
             </Routes>
