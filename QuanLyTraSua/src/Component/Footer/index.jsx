@@ -25,6 +25,9 @@ function Footer() {
                     <NavLink to="/news" className="text-white/80 hover:text-orange-500 text-xl transition">
                         Tin tức
                     </NavLink>
+                    <NavLink to="/introduction" className="text-white/80 hover:text-orange-500 text-xl transition">
+                        Câu chuyện
+                    </NavLink>
                 </div>
             </div>
             <div className="flex flex-col mt-4 space-y-4">

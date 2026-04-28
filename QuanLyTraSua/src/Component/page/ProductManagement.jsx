@@ -1133,7 +1133,7 @@ export default function ProductManagement() {
                                                                         ))}
                                                                     </div>
                                                                 </td>
-                                                                <td className="px-4 py-4 font-semibold">
+                                                                <td className="px-4 py-4 font-semibold text-black">
                                                                     {p.basePrice.toLocaleString()}đ
                                                                 </td>
                                                                 <td className="px-4 py-4">
@@ -1150,7 +1150,7 @@ export default function ProductManagement() {
                                                                     <div className="flex justify-center gap-2">
                                                                         <button
                                                                             onClick={() => openEdit(p)}
-                                                                            className="p-1 hover:text-amber-600 transition"
+                                                                            className="p-1 text-black hover:text-amber-600 transition"
                                                                         >
                                                                             ✎
                                                                         </button>
@@ -1221,7 +1221,7 @@ export default function ProductManagement() {
                                                                     setEditCategory(c);
                                                                     setShowModal(true);
                                                                 }}
-                                                                className="p-2 hover:text-amber-600 transition"
+                                                                className="p-2 text-black hover:text-amber-600 transition"
                                                             >
                                                                 ✎
                                                             </button>
