@@ -14,11 +14,6 @@ const userSchema = new mongoose.Schema(
             unique: true,
             match: [/.+\@.+\..+/, 'Vui lòng cung cấp email hợp lệ'],
         },
-        phone: {
-            type: String,
-            trim: true,
-            default: '',
-        },
         password: {
             type: String,
             required: true,
@@ -26,6 +21,10 @@ const userSchema = new mongoose.Schema(
         fullname: {
             type: String,
             required: true,
+        },
+        phone: {
+            type: String,
+            default: '',
         },
         role: {
             type: String,
@@ -35,14 +34,6 @@ const userSchema = new mongoose.Schema(
         avatar: {
             type: String,
             default: '',
-        },
-        forgotPasswordCode: {
-            type: String,
-            default: '',
-        },
-        forgotPasswordCodeExpires: {
-            type: Date,
-            default: null,
         },
     },
     {
