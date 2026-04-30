@@ -284,7 +284,7 @@ export default function Location() {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Nhập từ khoá tìm kiếm theo tên"
-                                    style={{ width: '100%', padding: '8px 36px 8px 10px', fontSize: 14, border: '1px solid #d1d5db', background: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                                    style={{ width: '100%', padding: '8px 36px 8px 10px', fontSize: 14, border: '1px solid #d1d5db', background: '#fff', outline: 'none', boxSizing: 'border-box',color: '#000' }}
                                 />
                                 <button style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: '#ec4899', background: 'none', border: 'none', cursor: 'pointer' }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" style={{ width: 20, height: 20 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -297,7 +297,7 @@ export default function Location() {
                                 <select
                                     value={selectedProvince}
                                     onChange={handleProvinceChange}
-                                    style={{ flex: 1, padding: '8px 6px', fontSize: 13, border: '1px solid #d1d5db', background: '#fff', outline: 'none' }}
+                                    style={{ flex: 1, padding: '8px 6px', fontSize: 13, border: '1px solid #d1d5db', background: '#fff', outline: 'none', color: '#000'}}
                                 >
                                     {storeData.map((p) => (
                                         <option key={p.province} value={p.province}>
@@ -308,7 +308,7 @@ export default function Location() {
                                 <select
                                     value={selectedDistrict}
                                     onChange={(e) => setSelectedDistrict(e.target.value)}
-                                    style={{ flex: 1, padding: '8px 6px', fontSize: 13, border: '1px solid #d1d5db', background: '#fff', outline: 'none' }}
+                                    style={{ flex: 1, padding: '8px 6px', fontSize: 13, border: '1px solid #d1d5db', background: '#fff', outline: 'none', color: '#000' }}
                                 >
                                     {provinceData.districts.map((d) => (
                                         <option key={d} value={d}>
