@@ -1,45 +1,36 @@
 import { create } from 'zustand';
+import api from '../services/api';
 
-// 🔥 Load từ localStorage
-const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+const useCartStore = create((set) => ({
+    cart: [],
 
-const useCartStore = create((set, get) => ({
-    cart: savedCart,
-
-    // 👉 thêm sản phẩm
-    addToCart: (item) => {
-        const cart = get().cart;
-
-        const exist = cart.find(
-            (i) =>
-                i._id === item._id &&
-                JSON.stringify(i.size) === JSON.stringify(item.size) &&
-                JSON.stringify(i.toppings) === JSON.stringify(item.toppings)
-        );
-
-        let newCart;
-
-        if (exist) {
-            newCart = cart.map((i) =>
-                i === exist ? { ...i, qty: i.qty + item.qty } : i
-            );
-        } else {
-            newCart = [...cart, item];
-        }
-
-        localStorage.setItem('cart', JSON.stringify(newCart));
-        set({ cart: newCart });
+    fetchCart: async () => {
+        const data = await api.get('/users/cart');
+        set({ cart: data });
     },
 
-    // 👉 xóa
-    removeFromCart: (index) =>
-        set((state) => ({
-            cart: state.cart.filter((_, i) => i !== index)
-        })),
+    addToCart: async (item) => {
+        await api.post('/users/cart', { item });
 
-    // 👉 clear
-    clearCart: () => {
-        localStorage.removeItem('cart');
+        const data = await api.get('/users/cart');
+        set({ cart: data });
+    },
+
+    // 🔥 FIX XOÁ
+    removeFromCart: async (id) => {
+        console.log('🗑️ REMOVE ITEM:', id);
+
+        await api.delete(`/users/cart/${id}`);
+
+        const data = await api.get('/users/cart');
+
+        console.log('🟢 CART AFTER DELETE:', data);
+
+        set({ cart: data });
+    },
+
+    clearCart: async () => {
+        await api.delete('/users/cart');
         set({ cart: [] });
     }
 }));
