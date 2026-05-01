@@ -1,7 +1,20 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import process from 'process';
 import { saveBase64Image } from '../middleware/uploadMiddleware.js';
+
+const forgotPasswordCodes = new Map();
+
+const buildForgotPasswordKey = (username, contact) =>
+    `${String(username || '')
+        .trim()
+        .toLowerCase()}::${String(contact || '')
+        .trim()
+        .toLowerCase()}`;
+
+const createForgotPasswordCode = () => crypto.randomInt(100000, 1000000).toString();
 
 // Tạo JWT Token
 const generateToken = (id) => {
@@ -121,5 +134,115 @@ export const updateUserProfile = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+export const forgotPasswordRequest = async (req, res) => {
+    const { username, contact } = req.body;
+
+    try {
+        if (!username || !contact) {
+            return res.status(400).json({ message: 'Vui lòng nhập username và email hoặc số điện thoại!' });
+        }
+
+        const user = await User.findOne({
+            username: username.trim(),
+            $or: [{ email: contact.trim() }, { phone: contact.trim() }],
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Không tìm thấy tài khoản phù hợp!' });
+        }
+
+        const code = createForgotPasswordCode();
+        const key = buildForgotPasswordKey(username, contact);
+
+        forgotPasswordCodes.set(key, {
+            code,
+            userId: String(user._id),
+            expiresAt: Date.now() + 10 * 60 * 1000,
+        });
+
+        return res.json({
+            message: `Mã xác thực của bạn là ${code}. Mã có hiệu lực trong 10 phút.`,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const verifyForgotPasswordCode = async (req, res) => {
+    const { username, contact, code } = req.body;
+
+    try {
+        if (!username || !contact || !code) {
+            return res.status(400).json({ message: 'Thiếu thông tin xác thực!' });
+        }
+
+        const key = buildForgotPasswordKey(username, contact);
+        const stored = forgotPasswordCodes.get(key);
+
+        if (!stored) {
+            return res.status(400).json({ message: 'Mã xác thực không hợp lệ hoặc đã hết hạn!' });
+        }
+
+        if (stored.expiresAt < Date.now()) {
+            forgotPasswordCodes.delete(key);
+            return res.status(400).json({ message: 'Mã xác thực đã hết hạn!' });
+        }
+
+        if (stored.code !== String(code).trim()) {
+            return res.status(400).json({ message: 'Mã xác thực không chính xác!' });
+        }
+
+        return res.json({ message: 'Xác thực mã thành công.' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const resetPasswordWithCode = async (req, res) => {
+    const { username, contact, code, newPassword, confirmPassword } = req.body;
+
+    try {
+        if (!username || !contact || !code || !newPassword || !confirmPassword) {
+            return res.status(400).json({ message: 'Thiếu thông tin đặt lại mật khẩu!' });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ message: 'Mật khẩu xác nhận không khớp!' });
+        }
+
+        const key = buildForgotPasswordKey(username, contact);
+        const stored = forgotPasswordCodes.get(key);
+
+        if (!stored) {
+            return res.status(400).json({ message: 'Mã xác thực không hợp lệ hoặc đã hết hạn!' });
+        }
+
+        if (stored.expiresAt < Date.now()) {
+            forgotPasswordCodes.delete(key);
+            return res.status(400).json({ message: 'Mã xác thực đã hết hạn!' });
+        }
+
+        if (stored.code !== String(code).trim()) {
+            return res.status(400).json({ message: 'Mã xác thực không chính xác!' });
+        }
+
+        const user = await User.findById(stored.userId);
+
+        if (!user) {
+            forgotPasswordCodes.delete(key);
+            return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+        forgotPasswordCodes.delete(key);
+
+        return res.json({ message: 'Đổi mật khẩu thành công.' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 };
