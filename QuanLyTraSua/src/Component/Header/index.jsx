@@ -93,7 +93,7 @@ export default function Header({ user, setUser }) {
                     </NavLink>
 
                     <NavLink
-                        to='/introduction'
+                        to="/introduction"
                         className={({ isActive }) =>
                             `inline-block text-sm font-semibold uppercase tracking-wide transition
      ${isActive ? 'text-white border-b-2 border-yellow-400 pb-1' : 'text-white/80 hover:text-white'}`

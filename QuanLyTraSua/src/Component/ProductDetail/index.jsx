@@ -239,16 +239,13 @@ function ProductDetail({ product, onClose }) {
                             <button
                                 onClick={() => {
                                     const cartItem = {
-                                        productId: product._id,
+                                        _id: product._id,
                                         name: product.name,
                                         image: product.image,
-                                        price: finalUnitPrice,
+                                        finalPrice: finalUnitPrice,
                                         qty: quantity,
-
-                                        // 🔥 THÊM 2 CÁI NÀY
                                         size: selectedSize,
                                         toppings: selectedToppings,
-                                        qty: quantity,
                                     };
 
                                     addToCart(cartItem);

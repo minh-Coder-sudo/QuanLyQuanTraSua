@@ -11,7 +11,9 @@ export default function Cart() {
 
     // 🔥 TOTAL CHUẨN
     const total = cart.reduce((sum, item) => {
-        return sum + (item.price || 0) * (item.qty || 1);
+           const price = Number(item.finalPrice ?? item.price ?? item.basePrice ?? 0) || 0;
+           const qty = item.qty || 1;
+           return sum + price * qty;
     }, 0);
 
     return (
@@ -32,7 +34,7 @@ export default function Cart() {
                 {/* LIST */}
                 <div className='space-y-4'>
                     {cart.map((item) => {
-                        const price = item.price || 0;
+                            const price = Number(item.finalPrice ?? item.price ?? item.basePrice ?? 0) || 0;
                         const qty = item.qty || 1;
 
                         return (

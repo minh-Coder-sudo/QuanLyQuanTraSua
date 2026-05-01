@@ -959,8 +959,6 @@ export default function ProductManagement() {
                             { id: 'categories', label: 'Danh mục', icon: '📂', active: view === 'categories' },
                             { id: 'orders', label: 'Đơn hàng', icon: '🧾', active: view === 'orders' },
                             { id: 'stats', label: 'Thống kê', icon: '📊', active: view === 'stats' },
-                            { id: 'users', label: 'Khách hàng', icon: '👥' },
-                            { id: 'settings', label: 'Cài đặt', icon: '⚙️' },
                         ].map(({ id, label, icon, active }) => (
                             <button
                                 key={id}

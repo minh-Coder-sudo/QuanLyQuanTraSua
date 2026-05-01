@@ -1,8 +1,5 @@
 import api from './api';
 import useCartStore from '../store/cartStore';
-
-// 🔥 THÊM 2 STORE
-import useCartStore from '../store/cartStore';
 import useAddressStore from '../store/addressStore';
 
 const authService = {
@@ -27,10 +24,7 @@ const authService = {
     },
 
     verifyForgotPasswordCode: async (payload) => {
-        const data = await api.post(
-            '/auth/forgot-password/verify-code',
-            payload
-        );
+        const data = await api.post('/auth/forgot-password/verify-code', payload);
         return data;
     },
 
@@ -61,7 +55,7 @@ const authService = {
             useCartStore.getState().syncCartForCurrentUser(data);
         }
         return data;
-    }
+    },
 };
 
 export default authService;
