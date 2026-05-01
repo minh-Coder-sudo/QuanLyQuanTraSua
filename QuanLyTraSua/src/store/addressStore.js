@@ -1,17 +1,19 @@
 import { create } from 'zustand';
-
-const saved = JSON.parse(localStorage.getItem('addresses')) || [];
+import api from '../services/api';
 
 const useAddressStore = create((set) => ({
-    addresses: saved,
+    addresses: [],
     selected: null,
 
-    addAddress: (addr) =>
-        set((state) => {
-            const newList = [...state.addresses, addr];
-            localStorage.setItem('addresses', JSON.stringify(newList));
-            return { addresses: newList };
-        }),
+    fetchAddress: async () => {
+        const data = await api.get('/users/address');
+        set({ addresses: data });
+    },
+
+    addAddress: async (addr) => {
+        const data = await api.post('/users/address', addr);
+        set({ addresses: data });
+    },
 
     selectAddress: (addr) => set({ selected: addr })
 }));

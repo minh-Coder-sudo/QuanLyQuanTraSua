@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import api from '../services/api';
 
 const CART_STORAGE_PREFIX = 'cart';
 
@@ -64,7 +65,9 @@ const useCartStore = create((set, get) => ({
                 JSON.stringify(i.toppings) === JSON.stringify(item.toppings),
         );
 
-        let newCart;
+    // 🔥 FIX XOÁ
+    removeFromCart: async (id) => {
+        console.log('🗑️ REMOVE ITEM:', id);
 
         if (exist) {
             newCart = cart.map((i) => (i === exist ? { ...i, qty: i.qty + item.qty } : i));
