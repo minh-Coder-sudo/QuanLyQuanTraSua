@@ -53,6 +53,10 @@ const useCartStore = create((set, get) => ({
         });
     },
 
+    fetchCart: () => {
+        get().syncCartForCurrentUser();
+    },
+
     // 👉 thêm sản phẩm
     addToCart: (item) => {
         const cart = get().cart;
@@ -60,15 +64,12 @@ const useCartStore = create((set, get) => ({
 
         const exist = cart.find(
             (i) =>
-                i._id === item._id &&
+                (i._id === item._id || i.productId === item._id || i._id === item.productId) &&
                 JSON.stringify(i.size) === JSON.stringify(item.size) &&
                 JSON.stringify(i.toppings) === JSON.stringify(item.toppings),
         );
 
-    // 🔥 FIX XOÁ
-    removeFromCart: async (id) => {
-        console.log('🗑️ REMOVE ITEM:', id);
-
+        let newCart;
         if (exist) {
             newCart = cart.map((i) => (i === exist ? { ...i, qty: i.qty + item.qty } : i));
         } else {
@@ -79,7 +80,7 @@ const useCartStore = create((set, get) => ({
         set({ cart: newCart, cartKey });
     },
 
-    // 👉 xóa
+    // 👉 xóa theo index
     removeFromCart: (index) => {
         const cartKey = get().cartKey || getCartStorageKey();
         const newCart = get().cart.filter((_, i) => i !== index);

@@ -15,6 +15,7 @@ import MemberManagement from '../Component/page/MemberManagement';
 import Location from '../Component/page/Location';
 import Cart from '../Component/page/Cart';
 import PaymentSuccess from '../Component/page/PaymentSuccess';
+import MyOrders from '../Component/page/MyOrders';
 import IntroductionTeaMango from '../Component/page/IntroductionTeaMango';
 const Home = lazy(() => import('../Component/HomepageClient/Home.jsx'));
 
@@ -33,6 +34,10 @@ export default function AppRoutes({ user, setUser }) {
                     <Route
                         path="/profile"
                         element={user ? <Profile user={user} setUser={setUser} /> : <Navigate to="/login" />}
+                    />
+                    <Route
+                        path="/my-orders"
+                        element={user ? <MyOrders /> : <Navigate to="/login" />}
                     />
 
                     <Route path="/menu" element={<Menu />} />

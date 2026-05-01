@@ -31,13 +31,13 @@ export default function Cart() {
 
                 {/* LIST */}
                 <div className='space-y-4'>
-                    {cart.map((item) => {
+                    {cart.map((item, idx) => {
                         const price = item.price || 0;
                         const qty = item.qty || 1;
 
                         return (
                             <div
-                                key={item._id}
+                                key={`${item._id}-${idx}`}
                                 className='flex items-center justify-between bg-white p-4 rounded-2xl shadow hover:shadow-xl transition-all duration-300 border'
                             >
                                 {/* LEFT */}
@@ -88,7 +88,7 @@ export default function Cart() {
 
                                 {/* DELETE */}
                                 <button
-                                    onClick={() => removeFromCart(item._id)}
+                                    onClick={() => removeFromCart(idx)}
                                     className='text-red-400 hover:text-red-600 text-xl transition'
                                 >
                                     ✖
@@ -151,7 +151,8 @@ export default function Cart() {
                             if (paymentType === 'COD') {
                                 await api.post('/payment/checkout', {
                                     cart, // 🔥 FULL DATA
-                                    address
+                                    address,
+                                    user: JSON.parse(localStorage.getItem('user'))?._id // 🔥 THÊM ID USER
                                 });
 
                                 alert('✅ Đặt hàng COD thành công');
@@ -163,6 +164,7 @@ export default function Cart() {
                             if (paymentType === 'PAYOS') {
                                 const res = await api.post('/payment/payos', {
                                     cart,
+                                    user: JSON.parse(localStorage.getItem('user'))?._id, // 🔥 THÊM ID USER
                                     address: {
                                         name: address.name || 'Test',
                                         phone: address.phone || '0123456789',

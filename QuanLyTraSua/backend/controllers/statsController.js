@@ -10,25 +10,30 @@ export const getStatsSummary = async (req, res) => {
     // Tính tổng doanh thu hôm nay
     const todayOrders = await Order.find({
       createdAt: { $gte: today },
-      status: 'COMPLETED'
+      status: { $ne: 'CANCELLED' } // Không tính đơn đã hủy
     });
 
-    const todayRevenue = todayOrders.reduce((sum, order) => sum + order.totalPrice, 0);
+    const calculateOrderTotal = (order) => {
+      if (order.total || order.totalPrice) return (order.total || order.totalPrice);
+      return order.items.reduce((s, i) => s + (i.priceAtPurchase || i.price || 0) * (i.quantity || i.qty || 0), 0);
+    };
+
+    const todayRevenue = todayOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
 
     // Tính tổng doanh thu mọi thời đại
-    const allOrders = await Order.find({ status: 'COMPLETED' });
-    const totalRevenue = allOrders.reduce((sum, order) => sum + order.totalPrice, 0);
+    const allOrders = await Order.find({ status: { $ne: 'CANCELLED' } });
+    const totalRevenue = allOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
 
     // Sản phẩm bán chạy (Top 5)
     const hotProducts = await Order.aggregate([
-      { $match: { status: 'COMPLETED' } },
+      { $match: { status: { $ne: 'CANCELLED' } } },
       { $unwind: '$items' },
       {
         $group: {
-          _id: '$items.product',
+          _id: '$items.name',
           name: { $first: '$items.name' },
-          totalQty: { $sum: '$items.quantity' },
-          revenue: { $sum: { $multiply: ['$items.priceAtPurchase', '$items.quantity'] } }
+          totalQty: { $sum: { $ifNull: ['$items.quantity', '$items.qty'] } },
+          revenue: { $sum: { $multiply: [{ $ifNull: ['$items.priceAtPurchase', '$items.price'] }, { $ifNull: ['$items.quantity', '$items.qty'] }] } }
         }
       },
       { $sort: { totalQty: -1 } },
@@ -57,14 +62,36 @@ export const getRevenueChart = async (req, res) => {
     const revenueData = await Order.aggregate([
       {
         $match: {
-          status: 'COMPLETED',
+          status: { $ne: 'CANCELLED' },
           createdAt: { $gte: sevenDaysAgo }
+        }
+      },
+      {
+        $addFields: {
+          computedTotal: {
+            $cond: {
+              if: { $or: [{ $gt: ['$total', 0] }, { $gt: ['$totalPrice', 0] }] },
+              then: { $ifNull: ['$total', '$totalPrice'] },
+              else: {
+                $reduce: {
+                  input: '$items',
+                  initialValue: 0,
+                  in: {
+                    $add: [
+                      '$$value',
+                      { $multiply: [{ $ifNull: ['$$this.priceAtPurchase', '$$this.price'] }, { $ifNull: ['$$this.quantity', '$$this.qty'] }] }
+                    ]
+                  }
+                }
+              }
+            }
+          }
         }
       },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          revenue: { $sum: '$totalPrice' },
+          revenue: { $sum: '$computedTotal' },
           count: { $sum: 1 }
         }
       },

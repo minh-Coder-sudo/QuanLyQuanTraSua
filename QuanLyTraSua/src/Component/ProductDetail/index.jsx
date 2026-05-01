@@ -239,7 +239,7 @@ function ProductDetail({ product, onClose }) {
                             <button
                                 onClick={() => {
                                     const cartItem = {
-                                        productId: product._id,
+                                        _id: product._id, // 🔥 Đổi thành _id để Store nhận diện được
                                         name: product.name,
                                         image: product.image,
                                         price: finalUnitPrice,
@@ -248,7 +248,6 @@ function ProductDetail({ product, onClose }) {
                                         // 🔥 THÊM 2 CÁI NÀY
                                         size: selectedSize,
                                         toppings: selectedToppings,
-                                        qty: quantity,
                                     };
 
                                     addToCart(cartItem);

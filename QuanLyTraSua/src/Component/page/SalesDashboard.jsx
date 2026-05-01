@@ -92,6 +92,7 @@ export default function SalesDashboard({ onOrderSuccess }) {
                 })),
                 totalPrice,
                 paymentMethod,
+                user: JSON.parse(localStorage.getItem('user'))?._id, // 🔥 LƯU VẾT NHÂN VIÊN BÁN
             };
             await orderService.createOrder(orderData);
             setCart([]);

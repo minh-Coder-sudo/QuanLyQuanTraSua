@@ -1,8 +1,5 @@
 import api from './api';
 import useCartStore from '../store/cartStore';
-
-// 🔥 THÊM 2 STORE
-import useCartStore from '../store/cartStore';
 import useAddressStore from '../store/addressStore';
 
 const authService = {

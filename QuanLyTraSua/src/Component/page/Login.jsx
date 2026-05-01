@@ -28,7 +28,6 @@ const Login = ({ setUser }) => {
             await useCartStore.getState().fetchCart();
             await useAddressStore.getState().fetchAddress();
 
-            alert('Chào mừng bạn quay trở lại!');
             navigate('/');
         } catch (err) {
             setError(err.message || 'Email hoặc mật khẩu không đúng!');
