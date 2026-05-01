@@ -24,10 +24,7 @@ const authService = {
     },
 
     verifyForgotPasswordCode: async (payload) => {
-        const data = await api.post(
-            '/auth/forgot-password/verify-code',
-            payload
-        );
+        const data = await api.post('/auth/forgot-password/verify-code', payload);
         return data;
     },
 
@@ -58,7 +55,7 @@ const authService = {
             useCartStore.getState().syncCartForCurrentUser(data);
         }
         return data;
-    }
+    },
 };
 
 export default authService;

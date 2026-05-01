@@ -3,9 +3,9 @@ import Order from '../models/Order.js';
 // @desc    Lấy tổng quan thống kê (Doanh thu, Đơn hàng)
 // @route   GET /api/stats/summary
 export const getStatsSummary = async (req, res) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    try {
+        const { fromDate, toDate } = req.query;
+        let dateRange = {};
 
     // Tính tổng doanh thu hôm nay
     const todayOrders = await Order.find({
@@ -40,24 +40,24 @@ export const getStatsSummary = async (req, res) => {
       { $limit: 5 }
     ]);
 
-    res.json({
-      todayRevenue,
-      todayOrdersCount: todayOrders.length,
-      totalRevenue,
-      totalOrdersCount: allOrders.length,
-      hotProducts
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+        res.json({
+            todayRevenue,
+            todayOrdersCount: todayOrders.length,
+            totalRevenue,
+            totalOrdersCount: allOrders.length,
+            hotProducts,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 // @desc    Lấy doanh thu theo ngày (Dành cho biểu đồ)
 // @route   GET /api/stats/revenue-chart
 export const getRevenueChart = async (req, res) => {
-  try {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    try {
+        const { fromDate, toDate } = req.query;
+        let dateRange = {};
 
     const revenueData = await Order.aggregate([
       {
@@ -98,8 +98,25 @@ export const getRevenueChart = async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    res.json(revenueData);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+        const revenueData = await Order.aggregate([
+            {
+                $match: {
+                    status: 'COMPLETED',
+                    createdAt: dateRange,
+                },
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    revenue: { $sum: '$total' },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { _id: 1 } },
+        ]);
+
+        res.json(revenueData);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

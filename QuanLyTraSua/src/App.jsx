@@ -20,9 +20,9 @@ function App() {
                 setUser(loggedUser);
 
                 try {
-                    // 🔥 LOAD LẠI CART + ADDRESS KHI RELOAD
+                    // 🔥 LOAD LẠI CART KHI RELOAD
                     await useCartStore.getState().fetchCart();
-                    await useAddressStore.getState().fetchAddress();
+                    // Không fetch address ở đây - nó sẽ trigger khi navigate
                 } catch (err) {
                     console.error('❌ Load user data lỗi:', err);
                 }

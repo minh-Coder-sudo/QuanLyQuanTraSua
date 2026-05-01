@@ -8,10 +8,11 @@ const router = express.Router();
 router.post('/checkout', async (req, res) => {
     const { cart, address } = req.body;
 
-    const total = cart.reduce(
-        (sum, item) => sum + (item.price || 0) * (item.qty || 1),
-        0
-    );
+    const total = cart.reduce((sum, item) => {
+        const price = Number(item.finalPrice ?? item.price ?? item.basePrice ?? 0) || 0;
+        const qty = item.qty || item.quantity || 1;
+        return sum + price * qty;
+    }, 0);
 
     // 🔥 lưu DB luôn
     await Order.create({
@@ -20,12 +21,12 @@ router.post('/checkout', async (req, res) => {
         items: cart,
         total,
         address,
-        status: 'COD'
+        status: 'PENDING',
     });
 
     res.json({
         message: 'Đặt hàng thành công',
-        total
+        total,
     });
 });
 
@@ -44,10 +45,11 @@ router.post('/payos', async (req, res) => {
             return res.status(400).json({ error: 'Missing address' });
         }
 
-        const total = cart.reduce(
-            (sum, item) => sum + (item.price || 0) * (item.qty || 1),
-            0
-        );
+        const total = cart.reduce((sum, item) => {
+            const price = Number(item.finalPrice ?? item.price ?? item.basePrice ?? 0) || 0;
+            const qty = item.qty || item.quantity || 1;
+            return sum + price * qty;
+        }, 0);
 
         console.log('💰 TOTAL:', total);
 
@@ -63,7 +65,7 @@ router.post('/payos', async (req, res) => {
             items: cart,
             total,
             address,
-            status: 'PENDING'
+            status: 'PENDING',
         });
 
         const paymentData = {
@@ -71,7 +73,7 @@ router.post('/payos', async (req, res) => {
             amount: Math.floor(total), // 🔥 FIX
             description: 'Thanh toan tra sua',
             returnUrl: 'http://localhost:5173/payment-success',
-            cancelUrl: 'http://localhost:5173/payment-fail'
+            cancelUrl: 'http://localhost:5173/cart',
         };
 
         const result = await payos.createPaymentLink(paymentData);

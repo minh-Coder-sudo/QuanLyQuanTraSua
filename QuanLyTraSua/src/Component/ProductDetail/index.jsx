@@ -242,10 +242,8 @@ function ProductDetail({ product, onClose }) {
                                         _id: product._id, // 🔥 Đổi thành _id để Store nhận diện được
                                         name: product.name,
                                         image: product.image,
-                                        price: finalUnitPrice,
+                                        finalPrice: finalUnitPrice,
                                         qty: quantity,
-
-                                        // 🔥 THÊM 2 CÁI NÀY
                                         size: selectedSize,
                                         toppings: selectedToppings,
                                     };

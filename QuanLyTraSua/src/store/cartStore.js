@@ -53,8 +53,12 @@ const useCartStore = create((set, get) => ({
         });
     },
 
-    fetchCart: () => {
-        get().syncCartForCurrentUser();
+    // 👉 load cart (async-friendly) — used by App and Login
+    fetchCart: async (user = getCurrentUser()) => {
+        const nextCartKey = getCartStorageKey(user);
+        const cart = readCartFromStorage(nextCartKey);
+        set({ cartKey: nextCartKey, cart });
+        return cart;
     },
 
     // 👉 thêm sản phẩm
@@ -70,8 +74,9 @@ const useCartStore = create((set, get) => ({
         );
 
         let newCart;
+
         if (exist) {
-            newCart = cart.map((i) => (i === exist ? { ...i, qty: i.qty + item.qty } : i));
+            newCart = cart.map((i) => (i === exist ? { ...i, qty: (i.qty || 0) + (item.qty || 1) } : i));
         } else {
             newCart = [...cart, item];
         }
