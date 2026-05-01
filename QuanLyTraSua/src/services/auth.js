@@ -1,5 +1,9 @@
 import api from './api';
 
+// 🔥 THÊM 2 STORE
+import useCartStore from '../store/cartStore';
+import useAddressStore from '../store/addressStore';
+
 const authService = {
     login: async (credentials) => {
         const data = await api.post('/auth/login', credentials);
@@ -21,7 +25,10 @@ const authService = {
     },
 
     verifyForgotPasswordCode: async (payload) => {
-        const data = await api.post('/auth/forgot-password/verify-code', payload);
+        const data = await api.post(
+            '/auth/forgot-password/verify-code',
+            payload
+        );
         return data;
     },
 
@@ -33,6 +40,10 @@ const authService = {
     logout: () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+
+        // 🔥 QUAN TRỌNG: reset dữ liệu theo user
+        useCartStore.setState({ cart: [] });
+        useAddressStore.setState({ addresses: [], selected: null });
     },
 
     getCurrentUser: () => {
@@ -46,7 +57,7 @@ const authService = {
             localStorage.setItem('user', JSON.stringify(data));
         }
         return data;
-    },
+    }
 };
 
 export default authService;

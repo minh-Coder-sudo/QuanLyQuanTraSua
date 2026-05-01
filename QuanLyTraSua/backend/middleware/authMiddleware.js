@@ -2,41 +2,63 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Lấy token từ header (Bearer <token>)
-      token = req.headers.authorization.split(' ')[1];
+        let token;
 
-      // Giải mã token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // 🔥 CHECK HEADER
+        if (
+            req.headers.authorization &&
+            req.headers.authorization.startsWith('Bearer')
+        ) {
+            token = req.headers.authorization.split(' ')[1];
 
-      // Lấy thông tin user từ ID trong token (không lấy password)
-      req.user = await User.findById(decoded.id).select('-password');
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      next();
+            const user = await User.findById(decoded.id).select('-password');
+
+            // ❗ FIX QUAN TRỌNG
+            if (!user) {
+                return res.status(401).json({
+                    message: 'User không tồn tại hoặc đã bị xoá'
+                });
+            }
+
+            req.user = user;
+            next();
+        } else {
+            return res.status(401).json({
+                message: 'Thiếu token'
+            });
+        }
     } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: 'Không có quyền truy cập, token không hợp lệ!' });
+        console.error('❌ AUTH ERROR:', error);
+        return res.status(401).json({
+            message: 'Token không hợp lệ'
+        });
     }
-  } else {
-    res.status(401).json({ message: 'Không có quyền truy cập, thiếu token!' });
-  }
 };
 
+// ================= ADMIN =================
 export const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'ADMIN') {
-    next();
-  } else {
-    res.status(403).json({ message: 'Bạn không có quyền Admin để thực hiện hành động này!' });
-  }
+    if (req.user && req.user.role === 'ADMIN') {
+        next();
+    } else {
+        res.status(403).json({
+            message: 'Bạn không có quyền Admin!'
+        });
+    }
 };
 
+// ================= STAFF =================
 export const staff = (req, res, next) => {
-    if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'EMPLOYEE')) {
-      next();
+    if (
+        req.user &&
+        (req.user.role === 'ADMIN' || req.user.role === 'EMPLOYEE')
+    ) {
+        next();
     } else {
-      res.status(403).json({ message: 'Bạn không có quyền truy cập (Dành cho Nhân viên/Quản lý)!' });
+        res.status(403).json({
+            message: 'Không có quyền truy cập!'
+        });
     }
 };

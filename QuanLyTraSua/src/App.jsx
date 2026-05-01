@@ -3,14 +3,32 @@ import React, { useState, useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes';
 import authService from './services/auth';
 
+// 🔥 THÊM 2 STORE
+import useCartStore from './store/cartStore';
+import useAddressStore from './store/addressStore';
+
 function App() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const loggedUser = authService.getCurrentUser();
-        if (loggedUser) {
-            setUser(loggedUser);
-        }
+        const initApp = async () => {
+            const loggedUser = authService.getCurrentUser();
+            const token = localStorage.getItem('token');
+
+            if (loggedUser && token) {
+                setUser(loggedUser);
+
+                try {
+                    // 🔥 LOAD LẠI CART + ADDRESS KHI RELOAD
+                    await useCartStore.getState().fetchCart();
+                    await useAddressStore.getState().fetchAddress();
+                } catch (err) {
+                    console.error('❌ Load user data lỗi:', err);
+                }
+            }
+        };
+
+        initApp();
     }, []);
 
     return (

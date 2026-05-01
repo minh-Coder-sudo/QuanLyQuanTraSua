@@ -9,10 +9,9 @@ export default function Cart() {
     const [showModal, setShowModal] = useState(false);
     const [paymentType, setPaymentType] = useState(null);
 
+    // 🔥 TOTAL CHUẨN
     const total = cart.reduce((sum, item) => {
-        const price = item.finalPrice || item.basePrice || 0;
-        const qty = item.qty || 1;
-        return sum + price * qty;
+        return sum + (item.price || 0) * (item.qty || 1);
     }, 0);
 
     return (
@@ -32,13 +31,13 @@ export default function Cart() {
 
                 {/* LIST */}
                 <div className='space-y-4'>
-                    {cart.map((item, index) => {
-                        const price = item.finalPrice || item.basePrice || 0;
+                    {cart.map((item) => {
+                        const price = item.price || 0;
                         const qty = item.qty || 1;
 
                         return (
                             <div
-                                key={index}
+                                key={item._id}
                                 className='flex items-center justify-between bg-white p-4 rounded-2xl shadow hover:shadow-xl transition-all duration-300 border'
                             >
                                 {/* LEFT */}
@@ -60,11 +59,13 @@ export default function Cart() {
                                             {item.name}
                                         </p>
 
+                                        {/* SIZE */}
                                         <p className='text-sm text-gray-500'>
                                             Size:{' '}
                                             {item.size?.label || 'Mặc định'}
                                         </p>
 
+                                        {/* TOPPING */}
                                         <p className='text-sm text-gray-500'>
                                             {item.toppings?.length > 0
                                                 ? item.toppings
@@ -87,7 +88,7 @@ export default function Cart() {
 
                                 {/* DELETE */}
                                 <button
-                                    onClick={() => removeFromCart(index)}
+                                    onClick={() => removeFromCart(item._id)}
                                     className='text-red-400 hover:text-red-600 text-xl transition'
                                 >
                                     ✖
@@ -120,7 +121,7 @@ export default function Cart() {
                                 }}
                                 className='flex-1 bg-gray-900 text-white py-3 rounded-2xl hover:scale-105 hover:bg-black transition-all duration-200 shadow-md'
                             >
-                                🚚 Thanh toán COD
+                                🚚 Thanh toán khi nhận hàng
                             </button>
 
                             {/* PAYOS */}
@@ -146,10 +147,10 @@ export default function Cart() {
                         if (!address) return alert('Chọn địa chỉ');
 
                         try {
-                            // COD
+                            // ================= COD =================
                             if (paymentType === 'COD') {
                                 await api.post('/payment/checkout', {
-                                    cart,
+                                    cart, // 🔥 FULL DATA
                                     address
                                 });
 
@@ -158,17 +159,21 @@ export default function Cart() {
                                 setShowModal(false);
                             }
 
-                            // PAYOS
+                            // ================= PAYOS =================
                             if (paymentType === 'PAYOS') {
                                 const res = await api.post('/payment/payos', {
                                     cart,
-                                    address
+                                    address: {
+                                        name: address.name || 'Test',
+                                        phone: address.phone || '0123456789',
+                                        address: address.address || 'Trà Vinh' // 🔥 FIX CHÍNH
+                                    }
                                 });
 
                                 window.location.href = res.checkoutUrl;
                             }
                         } catch (err) {
-                            console.error(err);
+                            console.error('❌ CHECKOUT ERROR:', err);
                             alert('❌ Có lỗi xảy ra!');
                         }
                     }}

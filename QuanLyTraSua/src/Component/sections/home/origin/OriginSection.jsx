@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ImgTea from '../../../../assets/ImgOriginSection.png';
 import ImgMilk from '../../../../assets/ImgMilk.png';
+import { useNavigate } from 'react-router-dom';
 const sections = [
     {
         image: ImgTea,
@@ -27,6 +28,7 @@ const sections = [
 ];
 
 export default function OriginSlider() {
+    const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
 
     useEffect(() => {
@@ -78,7 +80,10 @@ export default function OriginSlider() {
                                 {item.desc}
                             </p>
 
-                            <button className='border border-white px-8 py-3 w-fit hover:bg-white hover:text-black transition duration-300'>
+                            <button
+                                onClick={() => navigate('/introduction')}
+                                className='border border-white px-8 py-3 w-fit hover:bg-white hover:text-black transition duration-300'
+                            >
                                 XEM THÊM →
                             </button>
                         </div>

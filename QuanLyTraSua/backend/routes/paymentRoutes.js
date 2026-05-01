@@ -9,8 +9,7 @@ router.post('/checkout', async (req, res) => {
     const { cart, address } = req.body;
 
     const total = cart.reduce(
-        (sum, item) =>
-            sum + (item.finalPrice || item.basePrice || 0) * (item.qty || 1),
+        (sum, item) => sum + (item.price || 0) * (item.qty || 1),
         0
     );
 
@@ -34,29 +33,29 @@ router.post('/payos', async (req, res) => {
     try {
         const { cart, address } = req.body;
 
-        // 🔥 VALIDATE
+        console.log('🔥 PAYOS BODY:', req.body);
+
         if (!cart || cart.length === 0) {
             return res.status(400).json({ error: 'Cart empty' });
         }
 
-        if (!address) {
+        if (!address || !address.address || address.address.trim() === '') {
             return res.status(400).json({ error: 'Missing address' });
         }
 
         const total = cart.reduce(
-            (sum, item) =>
-                sum +
-                (item.finalPrice || item.basePrice || 0) * (item.qty || 1),
+            (sum, item) => sum + (item.price || 0) * (item.qty || 1),
             0
         );
 
-        if (total < 1000) {
+        console.log('💰 TOTAL:', total);
+
+        if (!total || total < 1000) {
             return res.status(400).json({ error: 'Amount too small' });
         }
 
         const orderCode = Date.now() + Math.floor(Math.random() * 1000);
 
-        // 🔥 LƯU DB
         await Order.create({
             orderCode,
             items: cart,
@@ -67,7 +66,7 @@ router.post('/payos', async (req, res) => {
 
         const paymentData = {
             orderCode,
-            amount: total,
+            amount: Math.floor(total), // 🔥 FIX
             description: 'Thanh toan tra sua',
             returnUrl: 'http://localhost:5173/payment-success',
             cancelUrl: 'http://localhost:5173/payment-fail'
@@ -77,14 +76,10 @@ router.post('/payos', async (req, res) => {
 
         res.json({ checkoutUrl: result.checkoutUrl });
     } catch (err) {
-        console.error(
-            '❌ PAYOS ERROR:',
-            err.response?.data || err.message || err
-        );
+        console.error('❌ PAYOS ERROR:', err);
         res.status(500).json({ error: 'PayOS error' });
     }
 });
-
 // ================= FIX PAYOS TEST =================
 router.get('/payos-webhook', (req, res) => {
     res.send('Webhook OK');
