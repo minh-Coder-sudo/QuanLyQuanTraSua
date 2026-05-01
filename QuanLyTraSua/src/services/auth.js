@@ -1,4 +1,5 @@
 import api from './api';
+import useCartStore from '../store/cartStore';
 
 // 🔥 THÊM 2 STORE
 import useCartStore from '../store/cartStore';
@@ -10,6 +11,7 @@ const authService = {
         if (data.token) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data));
+            useCartStore.getState().syncCartForCurrentUser(data);
         }
         return data;
     },
@@ -38,6 +40,7 @@ const authService = {
     },
 
     logout: () => {
+        useCartStore.getState().syncCartForCurrentUser(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
@@ -55,6 +58,7 @@ const authService = {
         const data = await api.put('/auth/profile', userData);
         if (data) {
             localStorage.setItem('user', JSON.stringify(data));
+            useCartStore.getState().syncCartForCurrentUser(data);
         }
         return data;
     }
