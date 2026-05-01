@@ -9,6 +9,7 @@ import useAddressStore from './store/addressStore';
 
 function App() {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const initApp = async () => {
@@ -26,10 +27,13 @@ function App() {
                     console.error('❌ Load user data lỗi:', err);
                 }
             }
+            setLoading(false);
         };
 
         initApp();
     }, []);
+
+    if (loading) return null; // Hoặc một cái Spinner chờ
 
     return (
         <div>

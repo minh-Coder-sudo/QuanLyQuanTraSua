@@ -7,31 +7,38 @@ export const getStatsSummary = async (req, res) => {
         const { fromDate, toDate } = req.query;
         let dateRange = {};
 
-        if (fromDate && toDate) {
-            const start = new Date(fromDate);
-            const end = new Date(toDate);
-            end.setHours(23, 59, 59, 999);
-            dateRange = { createdAt: { $gte: start, $lte: end } };
-        } else {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            dateRange = { createdAt: { $gte: today } };
+    // Tính tổng doanh thu hôm nay
+    const todayOrders = await Order.find({
+      createdAt: { $gte: today },
+      status: { $ne: 'CANCELLED' } // Không tính đơn đã hủy
+    });
+
+    const calculateOrderTotal = (order) => {
+      if (order.total || order.totalPrice) return (order.total || order.totalPrice);
+      return order.items.reduce((s, i) => s + (i.priceAtPurchase || i.price || 0) * (i.quantity || i.qty || 0), 0);
+    };
+
+    const todayRevenue = todayOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
+
+    // Tính tổng doanh thu mọi thời đại
+    const allOrders = await Order.find({ status: { $ne: 'CANCELLED' } });
+    const totalRevenue = allOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
+
+    // Sản phẩm bán chạy (Top 5)
+    const hotProducts = await Order.aggregate([
+      { $match: { status: { $ne: 'CANCELLED' } } },
+      { $unwind: '$items' },
+      {
+        $group: {
+          _id: '$items.name',
+          name: { $first: '$items.name' },
+          totalQty: { $sum: { $ifNull: ['$items.quantity', '$items.qty'] } },
+          revenue: { $sum: { $multiply: [{ $ifNull: ['$items.priceAtPurchase', '$items.price'] }, { $ifNull: ['$items.quantity', '$items.qty'] }] } }
         }
-
-        // Tính tổng doanh thu trong khoảng ngày
-        const todayOrders = await Order.find({
-            ...dateRange,
-            status: 'COMPLETED',
-        });
-
-        const todayRevenue = todayOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-
-        // Tính tổng doanh thu mọi thời đại
-        const allOrders = await Order.find({ status: 'COMPLETED' });
-        const totalRevenue = allOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-
-        // Sản phẩm bán chạy (Top 5)
-        const hotProducts = [];
+      },
+      { $sort: { totalQty: -1 } },
+      { $limit: 5 }
+    ]);
 
         res.json({
             todayRevenue,
@@ -52,16 +59,44 @@ export const getRevenueChart = async (req, res) => {
         const { fromDate, toDate } = req.query;
         let dateRange = {};
 
-        if (fromDate && toDate) {
-            const start = new Date(fromDate);
-            const end = new Date(toDate);
-            end.setHours(23, 59, 59, 999);
-            dateRange = { $gte: start, $lte: end };
-        } else {
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            dateRange = { $gte: sevenDaysAgo };
+    const revenueData = await Order.aggregate([
+      {
+        $match: {
+          status: { $ne: 'CANCELLED' },
+          createdAt: { $gte: sevenDaysAgo }
         }
+      },
+      {
+        $addFields: {
+          computedTotal: {
+            $cond: {
+              if: { $or: [{ $gt: ['$total', 0] }, { $gt: ['$totalPrice', 0] }] },
+              then: { $ifNull: ['$total', '$totalPrice'] },
+              else: {
+                $reduce: {
+                  input: '$items',
+                  initialValue: 0,
+                  in: {
+                    $add: [
+                      '$$value',
+                      { $multiply: [{ $ifNull: ['$$this.priceAtPurchase', '$$this.price'] }, { $ifNull: ['$$this.quantity', '$$this.qty'] }] }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          revenue: { $sum: '$computedTotal' },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
 
         const revenueData = await Order.aggregate([
             {

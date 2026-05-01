@@ -26,12 +26,26 @@ export const createOrder = async (req, res) => {
 // @desc    Lấy toàn bộ đơn hàng
 // @route   GET /api/orders
 export const getOrders = async (req, res) => {
-    try {
-        const orders = await Order.find({}).sort({ createdAt: -1 }); // Mới nhất lên đầu
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const orders = await Order.find({})
+      .populate('user', 'username fullname')
+      .sort({ createdAt: -1 }); // Mới nhất lên đầu
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Lấy đơn hàng của người dùng hiện tại
+// @route   GET /api/orders/my-orders/:userId
+export const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.params.userId })
+      .sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // @desc    Cập nhật trạng thái đơn hàng
