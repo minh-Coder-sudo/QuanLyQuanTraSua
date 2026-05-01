@@ -59,6 +59,7 @@ export default function OrderList() {
             <thead className="bg-gray-50 text-gray-400 font-medium uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="px-6 py-4">Mã đơn</th>
+                <th className="px-6 py-4">Khách hàng</th>
                 <th className="px-6 py-4">Thời gian</th>
                 <th className="px-6 py-4">Chi tiết món</th>
                 <th className="px-6 py-4">Tổng tiền</th>
@@ -72,8 +73,16 @@ export default function OrderList() {
               ) : filteredOrders.length === 0 ? (
                 <tr><td colSpan={6} className="text-center py-20 text-gray-400">Chưa có đơn hàng nào</td></tr>
               ) : filteredOrders.map(order => (
-                <tr key={order._id} className="hover:bg-gray-50/50 transition capitalize">
+                <tr key={order._id} className="hover:bg-gray-50/50 transition">
                   <td className="px-6 py-4 font-mono text-xs text-gray-400">#{order._id.slice(-8)}</td>
+                  <td className="px-6 py-4">
+                    <p className="font-bold text-gray-800 text-xs">
+                        {order.user?.fullname || order.user?.username || order.address?.name || 'Khách vãng lai'}
+                    </p>
+                    {order.address?.phone && (
+                        <p className="text-[10px] text-gray-400 mt-0.5">{order.address.phone}</p>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-gray-600">
                     {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                     <br/>
@@ -85,14 +94,14 @@ export default function OrderList() {
                     <div className="space-y-1">
                       {order.items.map((item, idx) => (
                         <div key={idx} className="text-xs">
-                          <span className="font-bold text-gray-800">{item.quantity}x</span> {item.name} 
-                          <span className="text-gray-400"> ({item.selectedSize?.code})</span>
+                          <span className="font-bold text-gray-800">{item.qty || item.quantity}x</span> {item.name} 
+                          <span className="text-gray-400"> ({item.size?.code || item.selectedSize?.code || 'M'})</span>
                         </div>
                       ))}
                     </div>
                   </td>
                   <td className="px-6 py-4 font-bold text-amber-600">
-                    {order.totalPrice.toLocaleString()}đ
+                    {(order.total || order.totalPrice || 0).toLocaleString()}đ
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">

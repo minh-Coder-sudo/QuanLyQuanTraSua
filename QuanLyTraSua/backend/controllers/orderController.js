@@ -31,8 +31,19 @@ export const getOrders = async (req, res) => {
   try {
     const orders = await Order.find({})
       .populate('user', 'username fullname')
-      .populate('items.product', 'name category image')
       .sort({ createdAt: -1 }); // Mới nhất lên đầu
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Lấy đơn hàng của người dùng hiện tại
+// @route   GET /api/orders/my-orders/:userId
+export const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.params.userId })
+      .sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });
