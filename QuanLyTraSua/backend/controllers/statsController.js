@@ -115,6 +115,9 @@ export const getRevenueChart = async (req, res) => {
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
         }
+      },
+      { $sort: { _id: 1 } }
+    ]);
 
         const agg = await Order.aggregate([
             { $match: { status: 'COMPLETED', createdAt: { $gte: start, $lte: end } } },

@@ -239,7 +239,7 @@ function ProductDetail({ product, onClose }) {
                             <button
                                 onClick={() => {
                                     const cartItem = {
-                                        _id: product._id,
+                                        _id: product._id, // 🔥 Đổi thành _id để Store nhận diện được
                                         name: product.name,
                                         image: product.image,
                                         finalPrice: finalUnitPrice,
