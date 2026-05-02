@@ -7,6 +7,7 @@ export default function Statistics() {
     const [loading, setLoading] = useState(true);
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
+    const [chartMetric, setChartMetric] = useState('revenue');
 
     const fetchStats = async (from = '', to = '') => {
         setLoading(true);
@@ -38,7 +39,10 @@ export default function Statistics() {
         fetchStats('', '');
     };
 
-    const maxRevenue = Math.max(...chartData.map((d) => d.revenue || 0), 1);
+    const maxMetricValue = Math.max(
+        ...chartData.map((d) => (chartMetric === 'revenue' ? Number(d.revenue || 0) : Number(d.count || 0))),
+        1,
+    );
 
     if (loading) return <div className="p-10 text-center text-gray-400 animate-pulse">Đang tổng hợp dữ liệu...</div>;
 
@@ -107,21 +111,52 @@ export default function Statistics() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Doanh thu 7 ngày */}
                 <div className="xl:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2">
-                        📈 Doanh thu 7 ngày gần nhất
-                    </h3>
+                    <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <h3 className="font-bold text-gray-800 flex items-center gap-2">📈 Thống kê 7 ngày gần nhất</h3>
+                        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+                            <button
+                                onClick={() => setChartMetric('revenue')}
+                                className={`px-3 py-1 text-xs font-semibold rounded-md transition ${
+                                    chartMetric === 'revenue'
+                                        ? 'bg-white text-amber-600 shadow'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                Doanh thu
+                            </button>
+                            <button
+                                onClick={() => setChartMetric('count')}
+                                className={`px-3 py-1 text-xs font-semibold rounded-md transition ${
+                                    chartMetric === 'count'
+                                        ? 'bg-white text-amber-600 shadow'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                Số đơn hoàn thành
+                            </button>
+                        </div>
+                    </div>
                     <div className="flex items-end justify-between h-64 gap-2 px-2">
                         {chartData.map((d, i) => (
                             <div key={i} className="flex-1 flex flex-col items-center group">
+                                <span className="text-[10px] font-bold text-amber-600 whitespace-nowrap mb-1">
+                                    {chartMetric === 'revenue'
+                                        ? `${Number(d.revenue || 0).toLocaleString()}đ`
+                                        : `${Number(d.count || 0)} đơn`}
+                                </span>
                                 <div className="w-full relative flex flex-col justify-end h-48 bg-gray-50 rounded-lg overflow-hidden border border-gray-50">
                                     <div
                                         className="bg-amber-400 hover:bg-amber-500 transition-all rounded-t-sm"
-                                        style={{ height: `${(d.revenue / maxRevenue) * 100}%` }}
-                                    >
-                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-amber-600 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                            {d.revenue.toLocaleString()}đ
-                                        </span>
-                                    </div>
+                                        style={{
+                                            height: `${
+                                                ((chartMetric === 'revenue'
+                                                    ? Number(d.revenue || 0)
+                                                    : Number(d.count || 0)) /
+                                                    maxMetricValue) *
+                                                100
+                                            }%`,
+                                        }}
+                                    ></div>
                                 </div>
                                 <span className="text-[10px] text-gray-400 mt-2 font-mono">
                                     {d._id.split('-').slice(1).join('/')}

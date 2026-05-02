@@ -5,47 +5,91 @@ import Order from '../models/Order.js';
 export const getStatsSummary = async (req, res) => {
     try {
         const { fromDate, toDate } = req.query;
-        let dateRange = {};
 
-    // Tính tổng doanh thu hôm nay
-    const todayOrders = await Order.find({
-      createdAt: { $gte: today },
-      status: { $ne: 'CANCELLED' } // Không tính đơn đã hủy
-    });
-
-    const calculateOrderTotal = (order) => {
-      if (order.total || order.totalPrice) return (order.total || order.totalPrice);
-      return order.items.reduce((s, i) => s + (i.priceAtPurchase || i.price || 0) * (i.quantity || i.qty || 0), 0);
-    };
-
-    const todayRevenue = todayOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
-
-    // Tính tổng doanh thu mọi thời đại
-    const allOrders = await Order.find({ status: { $ne: 'CANCELLED' } });
-    const totalRevenue = allOrders.reduce((sum, order) => sum + calculateOrderTotal(order), 0);
-
-    // Sản phẩm bán chạy (Top 5)
-    const hotProducts = await Order.aggregate([
-      { $match: { status: { $ne: 'CANCELLED' } } },
-      { $unwind: '$items' },
-      {
-        $group: {
-          _id: '$items.name',
-          name: { $first: '$items.name' },
-          totalQty: { $sum: { $ifNull: ['$items.quantity', '$items.qty'] } },
-          revenue: { $sum: { $multiply: [{ $ifNull: ['$items.priceAtPurchase', '$items.price'] }, { $ifNull: ['$items.quantity', '$items.qty'] }] } }
+        // determine range: if provided use that, otherwise default to today
+        let start, end;
+        if (fromDate && toDate) {
+            start = new Date(fromDate);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(toDate);
+            end.setHours(23, 59, 59, 999);
+        } else {
+            start = new Date();
+            start.setHours(0, 0, 0, 0);
+            end = new Date();
+            end.setHours(23, 59, 59, 999);
         }
-      },
-      { $sort: { totalQty: -1 } },
-      { $limit: 5 }
-    ]);
+
+        // Aggregation for summary
+        const todayAgg = await Order.aggregate([
+            { $match: { status: 'COMPLETED', createdAt: { $gte: start, $lte: end } } },
+            { $group: { _id: null, revenue: { $sum: { $ifNull: ['$total', 0] } }, count: { $sum: 1 } } },
+        ]);
+
+        const totalAgg = await Order.aggregate([
+            { $match: { status: 'COMPLETED' } },
+            { $group: { _id: null, revenue: { $sum: { $ifNull: ['$total', 0] } }, count: { $sum: 1 } } },
+        ]);
+
+        const todayRevenue = (todayAgg[0] && todayAgg[0].revenue) || 0;
+        const todayOrdersCount = (todayAgg[0] && todayAgg[0].count) || 0;
+        const totalRevenue = (totalAgg[0] && totalAgg[0].revenue) || 0;
+        const totalOrdersCount = (totalAgg[0] && totalAgg[0].count) || 0;
+
+        // Hot products (top 5) across COMPLETED orders
+        const hotProductsAgg = await Order.aggregate([
+            { $match: { status: 'COMPLETED' } },
+            { $unwind: '$items' },
+            {
+                $addFields: {
+                    'items._qty': { $ifNull: ['$items.qty', '$items.quantity'] },
+                    'items._unitPrice': {
+                        $ifNull: [
+                            '$items.unitPrice',
+                            {
+                                $ifNull: [
+                                    '$items.finalPrice',
+                                    { $ifNull: ['$items.price', { $ifNull: ['$items.basePrice', 0] }] },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: { name: '$items.name', slug: '$items.productSlug' },
+                    totalQty: { $sum: { $ifNull: ['$items._qty', 1] } },
+                    revenue: {
+                        $sum: {
+                            $cond: [
+                                { $ifNull: ['$items.lineTotal', false] },
+                                '$items.lineTotal',
+                                { $multiply: [{ $ifNull: ['$items._unitPrice', 0] }, { $ifNull: ['$items._qty', 1] }] },
+                            ],
+                        },
+                    },
+                },
+            },
+            { $sort: { revenue: -1 } },
+            { $limit: 5 },
+            {
+                $project: {
+                    _id: 0,
+                    name: '$_id.name',
+                    slug: '$_id.slug',
+                    totalQty: 1,
+                    revenue: 1,
+                },
+            },
+        ]);
 
         res.json({
             todayRevenue,
-            todayOrdersCount: todayOrders.length,
+            todayOrdersCount,
             totalRevenue,
-            totalOrdersCount: allOrders.length,
-            hotProducts,
+            totalOrdersCount,
+            hotProducts: hotProductsAgg,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -57,65 +101,54 @@ export const getStatsSummary = async (req, res) => {
 export const getRevenueChart = async (req, res) => {
     try {
         const { fromDate, toDate } = req.query;
-        let dateRange = {};
 
-    const revenueData = await Order.aggregate([
-      {
-        $match: {
-          status: { $ne: 'CANCELLED' },
-          createdAt: { $gte: sevenDaysAgo }
-        }
-      },
-      {
-        $addFields: {
-          computedTotal: {
-            $cond: {
-              if: { $or: [{ $gt: ['$total', 0] }, { $gt: ['$totalPrice', 0] }] },
-              then: { $ifNull: ['$total', '$totalPrice'] },
-              else: {
-                $reduce: {
-                  input: '$items',
-                  initialValue: 0,
-                  in: {
-                    $add: [
-                      '$$value',
-                      { $multiply: [{ $ifNull: ['$$this.priceAtPurchase', '$$this.price'] }, { $ifNull: ['$$this.quantity', '$$this.qty'] }] }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          revenue: { $sum: '$computedTotal' },
-          count: { $sum: 1 }
+        let start, end;
+        if (fromDate && toDate) {
+            start = new Date(fromDate);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(toDate);
+            end.setHours(23, 59, 59, 999);
+        } else {
+            end = new Date();
+            start = new Date();
+            start.setDate(start.getDate() - 6); // last 7 days including today
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
         }
       },
       { $sort: { _id: 1 } }
     ]);
 
-        const revenueData = await Order.aggregate([
-            {
-                $match: {
-                    status: 'COMPLETED',
-                    createdAt: dateRange,
-                },
-            },
+        const agg = await Order.aggregate([
+            { $match: { status: 'COMPLETED', createdAt: { $gte: start, $lte: end } } },
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-                    revenue: { $sum: '$total' },
+                    revenue: { $sum: { $ifNull: ['$total', 0] } },
                     count: { $sum: 1 },
                 },
             },
             { $sort: { _id: 1 } },
         ]);
 
-        res.json(revenueData);
+        // Fill missing dates between start and end
+        const days = [];
+        const cur = new Date(start);
+        while (cur <= end) {
+            const key = cur.toISOString().slice(0, 10);
+            days.push(key);
+            cur.setDate(cur.getDate() + 1);
+        }
+
+        const aggMap = new Map(agg.map((d) => [d._id, { revenue: d.revenue || 0, count: d.count || 0 }]));
+
+        const result = days.map((d) => ({
+            _id: d,
+            revenue: aggMap.get(d)?.revenue || 0,
+            count: aggMap.get(d)?.count || 0,
+        }));
+
+        res.json(result);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

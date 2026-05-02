@@ -74,7 +74,6 @@ const useCartStore = create((set, get) => ({
         );
 
         let newCart;
-
         if (exist) {
             newCart = cart.map((i) => (i === exist ? { ...i, qty: (i.qty || 0) + (item.qty || 1) } : i));
         } else {
