@@ -790,7 +790,11 @@ function GlobalStyles() {
 
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function ProductManagement() {
-    const [view, setView] = useState('dashboard'); // 'dashboard', 'products', 'categories', 'orders', 'stats'
+    const [view, setView] = useState(() => {
+        // Đọc view từ URL khi khởi tạo
+        const params = new URLSearchParams(window.location.search);
+        return params.get('view') || 'dashboard';
+    });
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState('');
@@ -829,6 +833,14 @@ export default function ProductManagement() {
         fetchProducts();
         fetchCategories();
     }, []);
+
+    // Cập nhật URL khi view thay đổi
+    const changeView = (v) => {
+        setView(v);
+        const url = new URL(window.location);
+        url.searchParams.set('view', v);
+        window.history.pushState({}, '', url);
+    };
 
     // ── Derived: filtered and paginated ──────────────────────────────────────
     const filtered = products.filter((p) => {
@@ -962,7 +974,7 @@ export default function ProductManagement() {
                         ].map(({ id, label, icon, active }) => (
                             <button
                                 key={id}
-                                onClick={() => id !== 'users' && id !== 'settings' && setView(id)}
+                                onClick={() => id !== 'users' && id !== 'settings' && changeView(id)}
                                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition
                 ${active ? 'bg-amber-500 text-white font-semibold shadow-md translate-x-1' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
                             >

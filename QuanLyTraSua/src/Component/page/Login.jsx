@@ -34,7 +34,6 @@ const Login = ({ setUser }) => {
                 }
             }
 
-            alert('Chào mừng bạn quay trở lại!');
             navigate('/');
         } catch (err) {
             setError(err.message || 'Email hoặc mật khẩu không đúng!');

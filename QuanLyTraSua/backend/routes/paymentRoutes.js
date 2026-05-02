@@ -17,6 +17,7 @@ router.post('/checkout', async (req, res) => {
     // 🔥 lưu DB luôn
     await Order.create({
         orderCode: Date.now(),
+        user: req.body.user || null, // 🔥 LƯU VẾT USER
         items: cart,
         total,
         address,
@@ -60,6 +61,7 @@ router.post('/payos', async (req, res) => {
 
         await Order.create({
             orderCode,
+            user: req.body.user || null, // 🔥 LƯU VẾT USER
             items: cart,
             total,
             address,

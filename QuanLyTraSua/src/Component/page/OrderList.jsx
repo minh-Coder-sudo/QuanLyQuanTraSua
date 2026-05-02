@@ -5,6 +5,7 @@ export default function OrderList() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState('all');
+    const [filterDate, setFilterDate] = useState('');
     const [updating, setUpdating] = useState(null);
 
     const fetchOrders = async () => {
@@ -37,7 +38,19 @@ export default function OrderList() {
         fetchOrders();
     }, []);
 
-    const filteredOrders = filterStatus === 'all' ? orders : orders.filter((o) => o.status === filterStatus);
+    const getLocalDateKey = (dateValue) => {
+        const d = new Date(dateValue);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const filteredOrders = orders.filter((o) => {
+        const matchStatus = filterStatus === 'all' ? true : o.status === filterStatus;
+        const matchDate = filterDate ? getLocalDateKey(o.createdAt) === filterDate : true;
+        return matchStatus && matchDate;
+    });
 
     const statusMap = {
         COMPLETED: { label: 'Đã hoàn thành', class: 'bg-emerald-100 text-emerald-700 border border-emerald-300' },
@@ -49,16 +62,32 @@ export default function OrderList() {
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <h2 className="font-bold text-gray-800 text-lg">Lịch sử đơn hàng</h2>
-                <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
-                >
-                    <option value="all">Tất cả trạng thái</option>
-                    <option value="COMPLETED">Đã hoàn thành</option>
-                    <option value="PENDING">Đang xử lý</option>
-                    <option value="CANCELLED">Đã hủy</option>
-                </select>
+                <div className="flex items-center gap-2">
+                    <input
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    />
+                    {filterDate && (
+                        <button
+                            onClick={() => setFilterDate('')}
+                            className="px-3 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
+                        >
+                            Xóa ngày
+                        </button>
+                    )}
+                    <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    >
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="COMPLETED">Đã hoàn thành</option>
+                        <option value="PENDING">Đang xử lý</option>
+                        <option value="CANCELLED">Đã hủy</option>
+                    </select>
+                </div>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

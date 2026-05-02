@@ -3,6 +3,11 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema(
     {
         orderCode: Number,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: false
+        },
 
         items: Array, // 🔥 đơn giản luôn
 
