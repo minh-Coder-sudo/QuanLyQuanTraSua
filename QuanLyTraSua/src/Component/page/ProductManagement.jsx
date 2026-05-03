@@ -713,29 +713,8 @@ function CategoryModal({ category, onSave, onClose }) {
                         />
                     </div>
                     <div>
-                        <Label>Hình ảnh (URL)</Label>
-                        <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
-                            {SAMPLE_CATEGORY_IMAGES.map((img) => (
-                                <button
-                                    key={img.url}
-                                    type="button"
-                                    onClick={() => setForm({ ...form, image: img.url })}
-                                    className={`shrink-0 border-2 rounded-lg p-1 transition ${form.image === img.url ? 'border-amber-500' : 'border-transparent hover:border-gray-300'}`}
-                                >
-                                    <img
-                                        src={img.url}
-                                        alt={img.name}
-                                        className="w-10 h-10 object-cover rounded shadow-sm"
-                                    />
-                                </button>
-                            ))}
-                        </div>
-                        <input
-                            value={form.image}
-                            onChange={(e) => setForm({ ...form, image: e.target.value })}
-                            className="input w-full text-black"
-                            placeholder="https://..."
-                        />
+                        <Label>Hình ảnh</Label>
+                        <ImagePicker value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
                     </div>
                     <div className="flex gap-3 justify-end pt-2">
                         <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-600">

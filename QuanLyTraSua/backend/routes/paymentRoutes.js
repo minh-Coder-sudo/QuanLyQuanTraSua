@@ -112,4 +112,36 @@ router.post('/payos-webhook', async (req, res) => {
     }
 });
 
+// ================= VIETQR =================
+router.post('/vietqr', (req, res) => {
+    try {
+        const { amount, orderCode } = req.body;
+
+        if (!amount || amount < 1000) {
+            return res.status(400).json({ error: 'Số tiền không hợp lệ' });
+        }
+
+        // Config BIDV - cập nhật số tài khoản và tên chủ tài khoản
+        const BANK_ID = '970418';
+        const ACCOUNT_NO = '1490324262';
+        const ACCOUNT_NAME = 'TEA MONGO';
+
+        const addInfo = `TeaMango${orderCode || Date.now()}`;
+
+        const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${Math.floor(amount)}&addInfo=${encodeURIComponent(addInfo)}`;
+
+        res.json({
+            qrUrl,
+            amount: Math.floor(amount),
+            addInfo,
+            bankId: BANK_ID,
+            accountNo: ACCOUNT_NO,
+            accountName: ACCOUNT_NAME,
+        });
+    } catch (err) {
+        console.error('❌ VIETQR ERROR:', err);
+        res.status(500).json({ error: 'Lỗi tạo QR' });
+    }
+});
+
 export default router;
