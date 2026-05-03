@@ -965,23 +965,32 @@ export default function ProductManagement() {
                         <p className="text-lg font-bold mt-0.5">Tea Mango</p>
                     </div>
                     <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto text-sm">
-                        {[
-                            { id: 'dashboard', label: 'Bán hàng (POS)', icon: '🛒', active: view === 'dashboard' },
-                            { id: 'products', label: 'Sản phẩm', icon: '🧋', active: view === 'products' },
-                            { id: 'categories', label: 'Danh mục', icon: '📂', active: view === 'categories' },
-                            { id: 'orders', label: 'Đơn hàng', icon: '🧾', active: view === 'orders' },
-                            { id: 'stats', label: 'Thống kê', icon: '📊', active: view === 'stats' },
-                        ].map(({ id, label, icon, active }) => (
-                            <button
-                                key={id}
-                                onClick={() => id !== 'users' && id !== 'settings' && changeView(id)}
-                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition
-                ${active ? 'bg-amber-500 text-white font-semibold shadow-md translate-x-1' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
-                            >
-                                <span className="text-lg">{icon}</span>
-                                {label}
-                            </button>
-                        ))}
+                        {(() => {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const isAdmin = user?.role === 'ADMIN';
+
+                            const sidebarItems = [
+                                { id: 'dashboard', label: 'Bán hàng (POS)', icon: '🛒', active: view === 'dashboard', adminOnly: false },
+                                { id: 'products', label: 'Sản phẩm', icon: '🧋', active: view === 'products', adminOnly: true },
+                                { id: 'categories', label: 'Danh mục', icon: '📂', active: view === 'categories', adminOnly: true },
+                                { id: 'orders', label: 'Đơn hàng', icon: '🧾', active: view === 'orders', adminOnly: true },
+                                { id: 'stats', label: 'Thống kê', icon: '📊', active: view === 'stats', adminOnly: true },
+                            ];
+
+                            return sidebarItems
+                                .filter(item => isAdmin || !item.adminOnly)
+                                .map(({ id, label, icon, active }) => (
+                                    <button
+                                        key={id}
+                                        onClick={() => changeView(id)}
+                                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition
+                                        ${active ? 'bg-amber-500 text-white font-semibold shadow-md translate-x-1' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
+                                    >
+                                        <span className="text-lg">{icon}</span>
+                                        {label}
+                                    </button>
+                                ));
+                        })()}
                     </nav>
                 </aside>
 
