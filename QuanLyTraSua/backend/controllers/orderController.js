@@ -48,17 +48,6 @@ export const getMyOrders = async (req, res) => {
   }
 };
 
-// @desc    Lấy đơn hàng của người dùng hiện tại
-// @route   GET /api/orders/my-orders/:userId
-export const getMyOrders = async (req, res) => {
-    try {
-        const orders = await Order.find({ user: req.params.userId }).sort({ createdAt: -1 });
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 // @desc    Cập nhật trạng thái đơn hàng
 // @route   PUT /api/orders/:id/status
 export const updateOrderStatus = async (req, res) => {

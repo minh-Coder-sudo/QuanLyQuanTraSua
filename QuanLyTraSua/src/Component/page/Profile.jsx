@@ -153,9 +153,19 @@ const Profile = ({ user, setUser }) => {
                     )}
                     <p className="mt-4 text-xl font-bold text-white">{user.fullname}</p>
                     <span
-                        className={`mt-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${user.role === 'ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}
+                        className={`mt-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                            user.role === 'ADMIN'
+                                ? 'bg-amber-100 text-amber-700'
+                                : user.role === 'EMPLOYEE'
+                                  ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-blue-100 text-blue-700'
+                        }`}
                     >
-                        {user.role === 'ADMIN' ? 'Quản Lý Tối Cao' : 'Thành Viên Vàng'}
+                        {user.role === 'ADMIN'
+                            ? 'Quản Lý Cửa Hàng'
+                            : user.role === 'EMPLOYEE'
+                              ? 'Nhân Viên Cửa Hàng'
+                              : 'Thành Viên Vàng'}
                     </span>
                 </div>
 

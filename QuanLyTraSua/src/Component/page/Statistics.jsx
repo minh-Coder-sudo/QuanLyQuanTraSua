@@ -174,7 +174,7 @@ export default function Statistics() {
                     <h3 className="font-bold text-gray-800 mb-6">🏆 Sản phẩm bán chạy (Best Seller)</h3>
                     <div className="space-y-5">
                         {summary?.hotProducts?.map((p, i) => (
-                            <div key={p._id} className="flex items-center gap-4 group">
+                            <div key={p.name || i} className="flex items-center gap-4 group">
                                 <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-400 group-hover:bg-amber-100 group-hover:text-amber-600 transition">
                                     {i + 1}
                                 </div>

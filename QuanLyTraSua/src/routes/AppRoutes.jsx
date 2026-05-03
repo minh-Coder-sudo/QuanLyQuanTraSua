@@ -16,6 +16,7 @@ import Location from '../Component/page/Location';
 import Cart from '../Component/page/Cart';
 import PaymentSuccess from '../Component/page/PaymentSuccess';
 import MyOrders from '../Component/page/MyOrders';
+import CustomerDashboard from '../Component/page/CustomerDashboard';
 import IntroductionTeaMango from '../Component/page/IntroductionTeaMango';
 const Home = lazy(() => import('../Component/HomepageClient/Home.jsx'));
 
@@ -65,6 +66,10 @@ export default function AppRoutes({ user, setUser }) {
                     <Route
                         path="/admin/members"
                         element={user?.role === 'ADMIN' ? <MemberManagement /> : <Navigate to="/" />}
+                    />
+                    <Route
+                        path="/admin/dashboard"
+                        element={user?.role === 'ADMIN' || user?.role === 'EMPLOYEE' ? <CustomerDashboard /> : <Navigate to="/" />}
                     />
                 </Route>
             </Routes>

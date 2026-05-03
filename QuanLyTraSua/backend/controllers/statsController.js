@@ -6,7 +6,6 @@ export const getStatsSummary = async (req, res) => {
     try {
         const { fromDate, toDate } = req.query;
 
-        // determine range: if provided use that, otherwise default to today
         let start, end;
         if (fromDate && toDate) {
             start = new Date(fromDate);
@@ -20,68 +19,55 @@ export const getStatsSummary = async (req, res) => {
             end.setHours(23, 59, 59, 999);
         }
 
-        // Aggregation for summary
-        const todayAgg = await Order.aggregate([
-            { $match: { status: 'COMPLETED', createdAt: { $gte: start, $lte: end } } },
-            { $group: { _id: null, revenue: { $sum: { $ifNull: ['$total', 0] } }, count: { $sum: 1 } } },
-        ]);
+        // Aggregation logic to handle different field names (total, totalPrice, qty, quantity, unitPrice, priceAtPurchase, etc.)
+        const processOrder = (orders) => {
+            return orders.map(order => {
+                let total = Number(order.total || order.totalPrice || 0);
+                if (total === 0 && order.items && order.items.length > 0) {
+                    total = order.items.reduce((sum, item) => {
+                        const price = Number(item.unitPrice || item.priceAtPurchase || item.price || item.finalPrice || item.basePrice || 0);
+                        const qty = Number(item.qty || item.quantity || 1);
+                        return sum + (price * qty);
+                    }, 0);
+                }
+                return { ...order, computedTotal: total };
+            });
+        };
 
-        const totalAgg = await Order.aggregate([
-            { $match: { status: 'COMPLETED' } },
-            { $group: { _id: null, revenue: { $sum: { $ifNull: ['$total', 0] } }, count: { $sum: 1 } } },
-        ]);
+        const todayOrders = await Order.find({ 
+            status: { $ne: 'CANCELLED' }, 
+            createdAt: { $gte: start, $lte: end } 
+        });
+        const processedToday = processOrder(todayOrders);
+        const todayRevenue = processedToday.reduce((sum, o) => sum + o.computedTotal, 0);
+        const todayOrdersCount = processedToday.length;
 
-        const todayRevenue = (todayAgg[0] && todayAgg[0].revenue) || 0;
-        const todayOrdersCount = (todayAgg[0] && todayAgg[0].count) || 0;
-        const totalRevenue = (totalAgg[0] && totalAgg[0].revenue) || 0;
-        const totalOrdersCount = (totalAgg[0] && totalAgg[0].count) || 0;
+        const totalOrders = await Order.find({ status: { $ne: 'CANCELLED' } });
+        const processedTotal = processOrder(totalOrders);
+        const totalRevenue = processedTotal.reduce((sum, o) => sum + o.computedTotal, 0);
+        const totalOrdersCount = processedTotal.length;
 
-        // Hot products (top 5) across COMPLETED orders
+        // Hot products
         const hotProductsAgg = await Order.aggregate([
-            { $match: { status: 'COMPLETED' } },
+            { $match: { status: { $ne: 'CANCELLED' } } },
             { $unwind: '$items' },
             {
-                $addFields: {
-                    'items._qty': { $ifNull: ['$items.qty', '$items.quantity'] },
-                    'items._unitPrice': {
-                        $ifNull: [
-                            '$items.unitPrice',
-                            {
-                                $ifNull: [
-                                    '$items.finalPrice',
-                                    { $ifNull: ['$items.price', { $ifNull: ['$items.basePrice', 0] }] },
-                                ],
-                            },
-                        ],
-                    },
-                },
-            },
-            {
                 $group: {
-                    _id: { name: '$items.name', slug: '$items.productSlug' },
-                    totalQty: { $sum: { $ifNull: ['$items._qty', 1] } },
+                    _id: '$items.name',
+                    totalQty: { $sum: { $ifNull: ['$items.qty', { $ifNull: ['$items.quantity', 1] }] } },
                     revenue: {
                         $sum: {
-                            $cond: [
-                                { $ifNull: ['$items.lineTotal', false] },
-                                '$items.lineTotal',
-                                { $multiply: [{ $ifNull: ['$items._unitPrice', 0] }, { $ifNull: ['$items._qty', 1] }] },
-                            ],
-                        },
-                    },
-                },
+                            $multiply: [
+                                { $ifNull: ['$items.unitPrice', { $ifNull: ['$items.priceAtPurchase', { $ifNull: ['$items.price', { $ifNull: ['$items.basePrice', 0] }] }] }] },
+                                { $ifNull: ['$items.qty', { $ifNull: ['$items.quantity', 1] }] }
+                            ]
+                        }
+                    }
+                }
             },
             { $sort: { revenue: -1 } },
             { $limit: 5 },
-            {
-                $project: {
-                    _id: 0,
-                    name: '$_id.name',
-                    slug: '$_id.slug',
-                    totalQty: 1,
-                    revenue: 1,
-                },
-            },
+            { $project: { _id: 0, name: '$_id', totalQty: 1, revenue: 1 } }
         ]);
 
         res.json({
@@ -111,27 +97,35 @@ export const getRevenueChart = async (req, res) => {
         } else {
             end = new Date();
             start = new Date();
-            start.setDate(start.getDate() - 6); // last 7 days including today
+            start.setDate(start.getDate() - 6);
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
         }
-      },
-      { $sort: { _id: 1 } }
-    ]);
 
-        const agg = await Order.aggregate([
-            { $match: { status: 'COMPLETED', createdAt: { $gte: start, $lte: end } } },
-            {
-                $group: {
-                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-                    revenue: { $sum: { $ifNull: ['$total', 0] } },
-                    count: { $sum: 1 },
-                },
-            },
-            { $sort: { _id: 1 } },
-        ]);
+        const orders = await Order.find({
+            status: { $ne: 'CANCELLED' },
+            createdAt: { $gte: start, $lte: end }
+        });
 
-        // Fill missing dates between start and end
+        const aggMap = new Map();
+        orders.forEach(order => {
+            const date = order.createdAt.toISOString().slice(0, 10);
+            let total = Number(order.total || order.totalPrice || 0);
+            if (total === 0 && order.items) {
+                total = order.items.reduce((sum, item) => {
+                    const price = Number(item.unitPrice || item.priceAtPurchase || item.price || item.basePrice || 0);
+                    const qty = Number(item.qty || item.quantity || 1);
+                    return sum + (price * qty);
+                }, 0);
+            }
+
+            const current = aggMap.get(date) || { revenue: 0, count: 0 };
+            aggMap.set(date, {
+                revenue: current.revenue + total,
+                count: current.count + 1
+            });
+        });
+
         const days = [];
         const cur = new Date(start);
         while (cur <= end) {
@@ -140,9 +134,7 @@ export const getRevenueChart = async (req, res) => {
             cur.setDate(cur.getDate() + 1);
         }
 
-        const aggMap = new Map(agg.map((d) => [d._id, { revenue: d.revenue || 0, count: d.count || 0 }]));
-
-        const result = days.map((d) => ({
+        const result = days.map(d => ({
             _id: d,
             revenue: aggMap.get(d)?.revenue || 0,
             count: aggMap.get(d)?.count || 0,
