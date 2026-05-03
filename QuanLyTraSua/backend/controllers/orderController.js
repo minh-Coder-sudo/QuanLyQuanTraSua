@@ -4,7 +4,7 @@ import Order from '../models/Order.js';
 // @route   POST /api/orders
 export const createOrder = async (req, res) => {
     try {
-        const { items, total, paymentMethod, user } = req.body;
+        const { items, total, paymentMethod, user, status } = req.body;
 
         if (!items || items.length === 0) {
             return res.status(400).json({ message: 'Đơn hàng trống!' });
@@ -13,7 +13,8 @@ export const createOrder = async (req, res) => {
         const order = new Order({
             items,
             total,
-            status: 'PENDING',
+            status: status || 'PENDING',
+            user: user || undefined,
         });
 
         const createdOrder = await order.save();

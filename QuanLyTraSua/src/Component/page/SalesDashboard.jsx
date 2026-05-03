@@ -21,6 +21,9 @@ export default function SalesDashboard({ onOrderSuccess }) {
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [qrUrl, setQrUrl] = useState('');
+    const [pendingOrderData, setPendingOrderData] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,30 +78,81 @@ export default function SalesDashboard({ onOrderSuccess }) {
 
     const totalPrice = cart.reduce((sum, item) => sum + calculateItemPrice(item), 0);
 
+    const requestVietQrUrl = async (amount, orderCode) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/payment/vietqr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, orderCode }),
+            });
+            const data = await response.json();
+            return data.qrUrl || null;
+        } catch (err) {
+            console.error('VietQR error:', err);
+            return null;
+        }
+    };
+
     const handleCheckout = async (paymentMethod) => {
         if (cart.length === 0) return;
+
+        const orderData = {
+            items: cart.map((item) => ({
+                product: item.product,
+                name: item.name,
+                priceAtPurchase: item.basePrice + (item.selectedSize?.extra || 0),
+                quantity: item.quantity,
+                selectedSize: item.selectedSize,
+                selectedToppings: item.selectedToppings,
+                sugar: item.sugar,
+                ice: item.ice,
+            })),
+            total: totalPrice,
+            paymentMethod,
+            user: JSON.parse(localStorage.getItem('user'))?._id,
+        };
+
+        // For bank transfers we first show a QR containing payment info + amount,
+        // then the user confirms payment which will create the order with status COMPLETED.
+        if (paymentMethod === 'BANK_TRANSFER') {
+            setPendingOrderData(orderData);
+            setCheckoutLoading(true);
+            const orderCode = Date.now();
+            const url = await requestVietQrUrl(totalPrice, orderCode);
+            setCheckoutLoading(false);
+            if (url) {
+                setQrUrl(url);
+                setQrModalOpen(true);
+            } else {
+                alert('Không thể tạo QR. Vui lòng thử lại.');
+            }
+            return;
+        }
+
+        // For cash (or other instant methods) create order immediately as COMPLETED
         setCheckoutLoading(true);
         try {
-            const orderData = {
-                items: cart.map((item) => ({
-                    product: item.product,
-                    name: item.name,
-                    priceAtPurchase: item.basePrice + (item.selectedSize?.extra || 0),
-                    quantity: item.quantity,
-                    selectedSize: item.selectedSize,
-                    selectedToppings: item.selectedToppings,
-                    sugar: item.sugar,
-                    ice: item.ice,
-                })),
-                totalPrice,
-                paymentMethod,
-                user: JSON.parse(localStorage.getItem('user'))?._id, // 🔥 LƯU VẾT NHÂN VIÊN BÁN
-            };
-            await orderService.createOrder(orderData);
+            await orderService.createOrder({ ...orderData, status: 'COMPLETED' });
             setCart([]);
             if (onOrderSuccess) onOrderSuccess('Thanh toán thành công!');
         } catch (error) {
             alert('Lỗi khi tạo đơn hàng!');
+        } finally {
+            setCheckoutLoading(false);
+        }
+    };
+
+    const confirmQrPayment = async () => {
+        if (!pendingOrderData) return;
+        setCheckoutLoading(true);
+        try {
+            await orderService.createOrder({ ...pendingOrderData, status: 'COMPLETED' });
+            setCart([]);
+            setQrModalOpen(false);
+            setPendingOrderData(null);
+            if (onOrderSuccess) onOrderSuccess('Thanh toán bằng QR thành công!');
+        } catch (err) {
+            alert('Lỗi khi lưu đơn hàng sau thanh toán!');
         } finally {
             setCheckoutLoading(false);
         }
@@ -302,11 +356,39 @@ export default function SalesDashboard({ onOrderSuccess }) {
                             className="bg-amber-500 text-white py-3 rounded-xl font-bold flex flex-col items-center justify-center hover:bg-amber-600 disabled:opacity-50 transition"
                         >
                             <span className="text-xs opacity-60">Chuyển khoản</span>
-                            💳 Quẹt mã
+                            💳 Quét mã
                         </button>
                     </div>
                 </div>
             </div>
+
+            {qrModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                    <div className="bg-white rounded-xl p-6 w-96 text-center">
+                        <h3 className="font-bold mb-3">Quét mã để thanh toán</h3>
+                        {qrUrl ? (
+                            <img src={qrUrl} alt="QR Payment" className="mx-auto mb-4 w-56 h-56" />
+                        ) : (
+                            <div className="h-56 w-56 mx-auto mb-4 flex items-center justify-center">Không có QR</div>
+                        )}
+                        <p className="text-lg font-bold mb-4">{totalPrice.toLocaleString()}đ</p>
+                        <div className="flex gap-3 justify-center">
+                            <button onClick={confirmQrPayment} className="bg-amber-500 text-white px-4 py-2 rounded">
+                                Xác nhận đã thanh toán
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setQrModalOpen(false);
+                                    setPendingOrderData(null);
+                                }}
+                                className="px-4 py-2 rounded border"
+                            >
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
