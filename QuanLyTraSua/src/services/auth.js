@@ -13,6 +13,16 @@ const authService = {
         return data;
     },
 
+    loginWithGoogle: async (credential) => {
+        const data = await api.post('/auth/google', { credential });
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data));
+            useCartStore.getState().syncCartForCurrentUser(data);
+        }
+        return data;
+    },
+
     register: async (userData) => {
         const data = await api.post('/auth/register', userData);
         return data;

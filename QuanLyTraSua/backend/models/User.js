@@ -4,13 +4,13 @@ import mongoose from 'mongoose';
 const cartItemSchema = new mongoose.Schema({
     productId: {
         type: String,
-        required: true
+        required: true,
     },
     name: String,
     price: Number,
     qty: {
         type: Number,
-        default: 1
+        default: 1,
     },
     image: String,
 
@@ -18,16 +18,16 @@ const cartItemSchema = new mongoose.Schema({
     size: {
         code: String,
         label: String,
-        extra: Number
+        extra: Number,
     },
 
     // 🔥 THÊM TOPPING
     toppings: [
         {
             name: String,
-            price: Number
-        }
-    ]
+            price: Number,
+        },
+    ],
 });
 
 const userSchema = new mongoose.Schema(
@@ -36,51 +36,61 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            trim: true
+            trim: true,
         },
 
         email: {
             type: String,
             required: true,
             unique: true,
-            match: [/.+\@.+\..+/, 'Vui lòng cung cấp email hợp lệ']
+            match: [/.+\@.+\..+/, 'Vui lòng cung cấp email hợp lệ'],
         },
 
         phone: {
             type: String,
             trim: true,
-            default: ''
+            default: '',
         },
 
         password: {
             type: String,
-            required: true
+            required: true,
         },
 
         fullname: {
             type: String,
-            required: true
+            required: true,
         },
 
         role: {
             type: String,
             enum: ['ADMIN', 'CLIENT', 'EMPLOYEE'],
-            default: 'CLIENT'
+            default: 'CLIENT',
         },
 
         avatar: {
             type: String,
-            default: ''
+            default: '',
+        },
+
+        authProvider: {
+            type: String,
+            default: 'local',
+        },
+
+        googleId: {
+            type: String,
+            default: '',
         },
 
         forgotPasswordCode: {
             type: String,
-            default: ''
+            default: '',
         },
 
         forgotPasswordCodeExpires: {
             type: Date,
-            default: null
+            default: null,
         },
 
         // 🔥 CART CHUẨN
@@ -91,13 +101,13 @@ const userSchema = new mongoose.Schema(
             {
                 name: String,
                 phone: String,
-                address: String
-            }
-        ]
+                address: String,
+            },
+        ],
     },
     {
-        timestamps: true
-    }
+        timestamps: true,
+    },
 );
 
 const User = mongoose.model('User', userSchema);
