@@ -356,7 +356,17 @@ export default function SalesDashboard({ onOrderSuccess }) {
                             className="bg-amber-500 text-white py-3 rounded-xl font-bold flex flex-col items-center justify-center hover:bg-amber-600 disabled:opacity-50 transition"
                         >
                             <span className="text-xs opacity-60">Chuyển khoản</span>
-                            💳 Quét mã
+                            <div className="flex items-center gap-1">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M3 3h8v8H3V3zm1 1v6h6V4H4zm7-1h8v8h-8V3zm1 1v6h6V4h-6zM3 13h8v8H3v-8zm1 1v6h6v-6H4zm10-1h2v2h-2v-2zm3 0h2v2h-2v-2zm-3 3h2v2h-2v-2zm3 0h2v2h-2v-2z" />
+                                </svg>
+                                Quét mã
+                            </div>
                         </button>
                     </div>
                 </div>

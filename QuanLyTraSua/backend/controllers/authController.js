@@ -16,6 +16,39 @@ const buildForgotPasswordKey = (username, contact) =>
 
 const createForgotPasswordCode = () => crypto.randomInt(100000, 1000000).toString();
 
+const buildUserResponse = (user) => ({
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    fullname: user.fullname,
+    phone: user.phone,
+    avatar: user.avatar,
+    role: user.role,
+    authProvider: user.authProvider || 'local',
+    googleId: user.googleId || '',
+    token: generateToken(user._id),
+});
+
+const generateUniqueUsername = async (email, fallbackName = 'user') => {
+    const baseName =
+        String(email || fallbackName)
+            .split('@')[0]
+            .replace(/[^a-zA-Z0-9_]/g, '')
+            .toLowerCase() || 'user';
+
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+        const suffix = attempt === 0 ? '' : crypto.randomBytes(2).toString('hex');
+        const candidate = `${baseName}${suffix}`.slice(0, 24);
+        const existing = await User.findOne({ username: candidate });
+
+        if (!existing) {
+            return candidate;
+        }
+    }
+
+    return `${baseName}${Date.now().toString(36)}`.slice(0, 24);
+};
+
 // Tạo JWT Token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -44,19 +77,11 @@ export const registerUser = async (req, res) => {
             password: hashedPassword,
             fullname,
             phone: phone || '',
+            authProvider: 'local',
         });
 
         if (user) {
-            res.status(201).json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                fullname: user.fullname,
-                phone: user.phone,
-                avatar: user.avatar,
-                role: user.role,
-                token: generateToken(user._id),
-            });
+            res.status(201).json(buildUserResponse(user));
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -71,16 +96,7 @@ export const authUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                fullname: user.fullname,
-                phone: user.phone,
-                avatar: user.avatar,
-                role: user.role,
-                token: generateToken(user._id),
-            });
+            res.json(buildUserResponse(user));
         } else {
             res.status(401).json({ message: 'Email hoặc mật khẩu không hợp lệ!' });
         }
@@ -119,21 +135,93 @@ export const updateUserProfile = async (req, res) => {
 
             const updatedUser = await user.save();
 
-            res.json({
-                _id: updatedUser._id,
-                fullname: updatedUser.fullname,
-                email: updatedUser.email,
-                phone: updatedUser.phone,
-                avatar: updatedUser.avatar,
-                username: updatedUser.username,
-                role: updatedUser.role,
-                token: generateToken(updatedUser._id),
-            });
+            res.json(buildUserResponse(updatedUser));
         } else {
             res.status(404).json({ message: 'Không tìm thấy người dùng!' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+export const googleAuthUser = async (req, res) => {
+    const { credential } = req.body;
+
+    try {
+        if (!credential) {
+            return res.status(400).json({ message: 'Thiếu credential Google!' });
+        }
+
+        const googleClientId = process.env.GOOGLE_CLIENT_ID;
+
+        if (!googleClientId) {
+            return res.status(500).json({ message: 'Thiếu GOOGLE_CLIENT_ID trên server!' });
+        }
+
+        const response = await fetch(
+            `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`,
+        );
+
+        if (!response.ok) {
+            return res.status(401).json({ message: 'Google token không hợp lệ!' });
+        }
+
+        const payload = await response.json();
+
+        if (payload.aud !== googleClientId) {
+            return res.status(401).json({ message: 'Google client không khớp!' });
+        }
+
+        if (String(payload.email_verified) !== 'true') {
+            return res.status(401).json({ message: 'Email Google chưa được xác thực!' });
+        }
+
+        const email = String(payload.email || '')
+            .trim()
+            .toLowerCase();
+        const googleId = String(payload.sub || '').trim();
+
+        if (!email || !googleId) {
+            return res.status(400).json({ message: 'Thiếu thông tin tài khoản Google!' });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            const salt = await bcrypt.genSalt(10);
+            const randomPassword = crypto.randomBytes(24).toString('hex');
+            const hashedPassword = await bcrypt.hash(randomPassword, salt);
+            const username = await generateUniqueUsername(email, payload.name);
+
+            user = await User.create({
+                username,
+                email,
+                password: hashedPassword,
+                fullname: payload.name || username,
+                phone: '',
+                avatar: payload.picture || '',
+                authProvider: 'google',
+                googleId,
+            });
+        } else {
+            user.authProvider = user.authProvider || 'local';
+            user.googleId = googleId;
+
+            if (!user.avatar && payload.picture) {
+                user.avatar = payload.picture;
+            }
+
+            if (!user.fullname && payload.name) {
+                user.fullname = payload.name;
+            }
+
+            await user.save();
+        }
+
+        return res.json(buildUserResponse(user));
+    } catch (error) {
+        console.error('❌ GOOGLE AUTH ERROR:', error);
+        return res.status(500).json({ message: 'Đăng nhập Google thất bại' });
     }
 };
 
