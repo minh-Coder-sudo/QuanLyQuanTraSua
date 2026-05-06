@@ -5,6 +5,23 @@ import ProductSlider from '../sections/home/product/ProductSlider';
 import ProductDetail from '../../Component/ProductDetail';
 import productService from '../../services/productService';
 import categoryService from '../../services/categoryService';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+        return imagePath;
+    }
+
+    if (imagePath.startsWith('/')) {
+        return `${API_URL}${imagePath}`;
+    }
+
+    return `${API_URL}/${imagePath}`;
+};
+
 function ProductList() {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setselectedProduct] = useState(null);
@@ -12,21 +29,35 @@ function ProductList() {
     const [activeCat, setActiveCat] = useState('all');
     const [categories, setCategories] = useState([]);
     const [search, setsearch] = useState('');
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const data = await productService.getProducts();
                 const dataCategories = await categoryService.getCategories();
-                setProducts(data);
-                setCategories(dataCategories);
+
+                const mappedProducts = data.map((product) => ({
+                    ...product,
+                    image: getImageUrl(product.image),
+                }));
+
+                const mappedCategories = dataCategories.map((category) => ({
+                    ...category,
+                    image: getImageUrl(category.image),
+                }));
+
+                setProducts(mappedProducts);
+                setCategories(mappedCategories);
             } catch (error) {
                 console.error('Lỗi khi lấy sản phẩm:', error);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchProducts();
     }, []);
+
     const filteredProducts = products.filter((p) => {
         const matchCategory = activeCat === 'all' || p.categorySlug === activeCat || p.category?._id === activeCat;
 
@@ -34,6 +65,7 @@ function ProductList() {
 
         return matchCategory && matchSearch;
     });
+
     return (
         <div className="mt-8">
             <ProductSlider />
@@ -68,7 +100,7 @@ function ProductList() {
                     <ProductItem
                         key={product._id}
                         {...product}
-                        id={product._id} // MongoDB uses _id
+                        id={product._id}
                         onViewDetail={() => setselectedProduct(product)}
                     />
                 ))}
