@@ -15,6 +15,22 @@ export default function ProductSlider() {
         frappe: [],
     });
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+            return imagePath;
+        }
+
+        if (imagePath.startsWith('/')) {
+            return `${API_URL}${imagePath}`;
+        }
+
+        return `${API_URL}/${imagePath}`;
+    };
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -214,7 +230,7 @@ export default function ProductSlider() {
                             <div className="absolute w-56 h-56 bg-orange-200 rounded-full blur-3xl opacity-40 mx-auto left-0 right-0"></div>
 
                             <img
-                                src={`http://localhost:5000${item.image}`}
+                                src={getImageUrl(item.image)}
                                 className="relative w-56 h-56 object-cover mx-auto rounded-full transition duration-500 group-hover:scale-110"
                             />
 
