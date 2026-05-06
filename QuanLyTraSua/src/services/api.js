@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 
 const api = {
     request: async (endpoint, options = {}) => {
@@ -7,7 +7,7 @@ const api = {
 
             const headers = {
                 'Content-Type': 'application/json',
-                ...options.headers
+                ...options.headers,
             };
 
             if (token) {
@@ -16,7 +16,7 @@ const api = {
 
             const response = await fetch(`${BASE_URL}${endpoint}`, {
                 ...options,
-                headers
+                headers,
             });
 
             const data = await response.json();
@@ -36,14 +36,14 @@ const api = {
     post: (endpoint, body) =>
         api.request(endpoint, {
             method: 'POST',
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
         }),
     put: (endpoint, body) =>
         api.request(endpoint, {
             method: 'PUT',
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
         }),
-    delete: (endpoint) => api.request(endpoint, { method: 'DELETE' })
+    delete: (endpoint) => api.request(endpoint, { method: 'DELETE' }),
 };
 
 export default api;
