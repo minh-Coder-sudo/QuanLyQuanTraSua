@@ -1,5 +1,21 @@
 import React from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+        return imagePath;
+    }
+
+    if (imagePath.startsWith('/')) {
+        return `${API_URL}${imagePath}`;
+    }
+
+    return `${API_URL}/${imagePath}`;
+};
+
 function ProductItem({ name, basePrice = 0, image, description, onViewDetail }) {
     return (
         <div className="product-item">
@@ -12,7 +28,7 @@ function ProductItem({ name, basePrice = 0, image, description, onViewDetail }) 
                 </button>
             </div>
 
-            <img src={`http://localhost:5000${image}`} alt={name} className="product-image" />
+            <img src={getImageUrl(image)} alt={name} className="product-image" />
         </div>
     );
 }
