@@ -5,17 +5,6 @@ import crypto from 'crypto';
 import process from 'process';
 import { saveBase64Image } from '../middleware/uploadMiddleware.js';
 
-const forgotPasswordCodes = new Map();
-
-const buildForgotPasswordKey = (username, contact) =>
-    `${String(username || '')
-        .trim()
-        .toLowerCase()}::${String(contact || '')
-        .trim()
-        .toLowerCase()}`;
-
-const createForgotPasswordCode = () => crypto.randomInt(100000, 1000000).toString();
-
 const buildUserResponse = (user) => ({
     _id: user._id,
     username: user.username,
@@ -242,17 +231,25 @@ export const forgotPasswordRequest = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy tài khoản phù hợp!' });
         }
 
-        const code = createForgotPasswordCode();
-        const key = buildForgotPasswordKey(username, contact);
+        // 🔥 SECURITY: Tạo token ngẫu nhiên (không phải mã code)
+        const resetToken = crypto.randomBytes(32).toString('hex');
 
-        forgotPasswordCodes.set(key, {
-            code,
-            userId: String(user._id),
-            expiresAt: Date.now() + 10 * 60 * 1000,
-        });
+        // 🔥 SECURITY: Hash token trước khi lưu vào DB
+        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+        // 🔥 SECURITY: Lưu token hash vào DB với expiry time
+        user.forgotPasswordCode = hashedToken;
+        user.forgotPasswordCodeExpires = Date.now() + 10 * 60 * 1000; // 10 phút
+        await user.save();
+
+        // 🔥 SECURITY: Trong production, gửi token qua email
+        // Email content: "Mã reset của bạn là: {resetToken}, có hiệu lực 10 phút"
+        // Tạm thời: gửi resetToken nhưng không phải mã code
+        console.log(`📧 Password reset token cho ${user.email}: ${resetToken}`);
 
         return res.json({
-            message: `Mã xác thực của bạn là ${code}. Mã có hiệu lực trong 10 phút.`,
+            message: 'Mã xác thực đã được gửi. Vui lòng kiểm tra email của bạn.',
+            // 🔥 SECURITY: KHÔNG trả token về response, chỉ thông báo
         });
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -267,19 +264,31 @@ export const verifyForgotPasswordCode = async (req, res) => {
             return res.status(400).json({ message: 'Thiếu thông tin xác thực!' });
         }
 
-        const key = buildForgotPasswordKey(username, contact);
-        const stored = forgotPasswordCodes.get(key);
+        const user = await User.findOne({
+            username: username.trim(),
+            $or: [{ email: contact.trim() }, { phone: contact.trim() }],
+        });
 
-        if (!stored) {
+        if (!user) {
+            return res.status(400).json({ message: 'Tài khoản không hợp lệ!' });
+        }
+
+        // 🔥 SECURITY: Kiểm tra token có tồn tại và chưa hết hạn
+        if (!user.forgotPasswordCode || !user.forgotPasswordCodeExpires) {
             return res.status(400).json({ message: 'Mã xác thực không hợp lệ hoặc đã hết hạn!' });
         }
 
-        if (stored.expiresAt < Date.now()) {
-            forgotPasswordCodes.delete(key);
+        if (user.forgotPasswordCodeExpires < Date.now()) {
+            // 🔥 Xoá token hết hạn
+            user.forgotPasswordCode = null;
+            user.forgotPasswordCodeExpires = null;
+            await user.save();
             return res.status(400).json({ message: 'Mã xác thực đã hết hạn!' });
         }
 
-        if (stored.code !== String(code).trim()) {
+        // 🔥 SECURITY: Hash code nhận được rồi so sánh với hash trong DB
+        const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+        if (user.forgotPasswordCode !== hashedCode) {
             return res.status(400).json({ message: 'Mã xác thực không chính xác!' });
         }
 
@@ -301,33 +310,45 @@ export const resetPasswordWithCode = async (req, res) => {
             return res.status(400).json({ message: 'Mật khẩu xác nhận không khớp!' });
         }
 
-        const key = buildForgotPasswordKey(username, contact);
-        const stored = forgotPasswordCodes.get(key);
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'Mật khẩu phải có ít nhất 6 ký tự!' });
+        }
 
-        if (!stored) {
+        const user = await User.findOne({
+            username: username.trim(),
+            $or: [{ email: contact.trim() }, { phone: contact.trim() }],
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Tài khoản không hợp lệ!' });
+        }
+
+        // 🔥 SECURITY: Kiểm tra token
+        if (!user.forgotPasswordCode || !user.forgotPasswordCodeExpires) {
             return res.status(400).json({ message: 'Mã xác thực không hợp lệ hoặc đã hết hạn!' });
         }
 
-        if (stored.expiresAt < Date.now()) {
-            forgotPasswordCodes.delete(key);
+        if (user.forgotPasswordCodeExpires < Date.now()) {
+            user.forgotPasswordCode = null;
+            user.forgotPasswordCodeExpires = null;
+            await user.save();
             return res.status(400).json({ message: 'Mã xác thực đã hết hạn!' });
         }
 
-        if (stored.code !== String(code).trim()) {
+        // 🔥 SECURITY: Hash & so sánh code
+        const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+        if (user.forgotPasswordCode !== hashedCode) {
             return res.status(400).json({ message: 'Mã xác thực không chính xác!' });
         }
 
-        const user = await User.findById(stored.userId);
-
-        if (!user) {
-            forgotPasswordCodes.delete(key);
-            return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
-        }
-
+        // 🔥 Băm mật khẩu mới
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(newPassword, salt);
+
+        // 🔥 Xoá token sau khi sử dụng (một lần dùng)
+        user.forgotPasswordCode = null;
+        user.forgotPasswordCodeExpires = null;
         await user.save();
-        forgotPasswordCodes.delete(key);
 
         return res.json({ message: 'Đổi mật khẩu thành công.' });
     } catch (error) {

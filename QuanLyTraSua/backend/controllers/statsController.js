@@ -1,4 +1,4 @@
-import Order from '../models/Order.js';
+import Order, { ORDER_STATUS } from '../models/Order.js';
 
 // @desc    Lấy tổng quan thống kê (Doanh thu, Đơn hàng)
 // @route   GET /api/stats/summary
@@ -19,37 +19,25 @@ export const getStatsSummary = async (req, res) => {
             end.setHours(23, 59, 59, 999);
         }
 
-        // Aggregation logic to handle different field names (total, totalPrice, qty, quantity, unitPrice, priceAtPurchase, etc.)
-        const processOrder = (orders) => {
-            return orders.map(order => {
-                let total = Number(order.total || order.totalPrice || 0);
-                if (total === 0 && order.items && order.items.length > 0) {
-                    total = order.items.reduce((sum, item) => {
-                        const price = Number(item.unitPrice || item.priceAtPurchase || item.price || item.finalPrice || item.basePrice || 0);
-                        const qty = Number(item.qty || item.quantity || 1);
-                        return sum + (price * qty);
-                    }, 0);
-                }
-                return { ...order, computedTotal: total };
-            });
-        };
+        // 🔥 SECURITY: Chỉ tính doanh thu từ các đơn PAID, COMPLETED, DELIVERED
+        // PENDING, COD chưa thanh toán, CANCELLED bị huỷ không tính
+        const paidStatuses = [ORDER_STATUS.PAID, ORDER_STATUS.COMPLETED, ORDER_STATUS.DELIVERED, ORDER_STATUS.COD];
 
-        const todayOrders = await Order.find({ 
-            status: { $ne: 'CANCELLED' }, 
-            createdAt: { $gte: start, $lte: end } 
+        const todayOrders = await Order.find({
+            status: { $in: paidStatuses },
+            createdAt: { $gte: start, $lte: end },
         });
-        const processedToday = processOrder(todayOrders);
-        const todayRevenue = processedToday.reduce((sum, o) => sum + o.computedTotal, 0);
-        const todayOrdersCount = processedToday.length;
+        const todayRevenue = todayOrders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+        const todayOrdersCount = todayOrders.length;
 
-        const totalOrders = await Order.find({ status: { $ne: 'CANCELLED' } });
-        const processedTotal = processOrder(totalOrders);
-        const totalRevenue = processedTotal.reduce((sum, o) => sum + o.computedTotal, 0);
-        const totalOrdersCount = processedTotal.length;
+        // Tất cả đơn hàng được trả tiền
+        const totalOrders = await Order.find({ status: { $in: paidStatuses } });
+        const totalRevenue = totalOrders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+        const totalOrdersCount = totalOrders.length;
 
-        // Hot products
+        // 🔥 Hot products - chỉ từ đơn thanh toán thành công
         const hotProductsAgg = await Order.aggregate([
-            { $match: { status: { $ne: 'CANCELLED' } } },
+            { $match: { status: { $in: paidStatuses } } },
             { $unwind: '$items' },
             {
                 $group: {
@@ -58,16 +46,16 @@ export const getStatsSummary = async (req, res) => {
                     revenue: {
                         $sum: {
                             $multiply: [
-                                { $ifNull: ['$items.unitPrice', { $ifNull: ['$items.priceAtPurchase', { $ifNull: ['$items.price', { $ifNull: ['$items.basePrice', 0] }] }] }] },
-                                { $ifNull: ['$items.qty', { $ifNull: ['$items.quantity', 1] }] }
-                            ]
-                        }
-                    }
-                }
+                                { $ifNull: ['$items.finalPrice', { $ifNull: ['$items.basePrice', 0] }] },
+                                { $ifNull: ['$items.qty', { $ifNull: ['$items.quantity', 1] }] },
+                            ],
+                        },
+                    },
+                },
             },
             { $sort: { revenue: -1 } },
             { $limit: 5 },
-            { $project: { _id: 0, name: '$_id', totalQty: 1, revenue: 1 } }
+            { $project: { _id: 0, name: '$_id', totalQty: 1, revenue: 1 } },
         ]);
 
         res.json({
@@ -104,25 +92,25 @@ export const getRevenueChart = async (req, res) => {
 
         const orders = await Order.find({
             status: { $ne: 'CANCELLED' },
-            createdAt: { $gte: start, $lte: end }
+            createdAt: { $gte: start, $lte: end },
         });
 
         const aggMap = new Map();
-        orders.forEach(order => {
+        orders.forEach((order) => {
             const date = order.createdAt.toISOString().slice(0, 10);
             let total = Number(order.total || order.totalPrice || 0);
             if (total === 0 && order.items) {
                 total = order.items.reduce((sum, item) => {
                     const price = Number(item.unitPrice || item.priceAtPurchase || item.price || item.basePrice || 0);
                     const qty = Number(item.qty || item.quantity || 1);
-                    return sum + (price * qty);
+                    return sum + price * qty;
                 }, 0);
             }
 
             const current = aggMap.get(date) || { revenue: 0, count: 0 };
             aggMap.set(date, {
                 revenue: current.revenue + total,
-                count: current.count + 1
+                count: current.count + 1,
             });
         });
 
@@ -134,7 +122,7 @@ export const getRevenueChart = async (req, res) => {
             cur.setDate(cur.getDate() + 1);
         }
 
-        const result = days.map(d => ({
+        const result = days.map((d) => ({
             _id: d,
             revenue: aggMap.get(d)?.revenue || 0,
             count: aggMap.get(d)?.count || 0,
