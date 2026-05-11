@@ -106,7 +106,7 @@ const Login = ({ setUser }) => {
                 window.google.accounts.id.renderButton(googleButtonRef.current, {
                     theme: 'outline',
                     size: 'large',
-                    width: '100%',
+                    width: 'auto',
                     text: 'continue_with',
                     shape: 'pill',
                 });
@@ -164,8 +164,8 @@ const Login = ({ setUser }) => {
                     <div className="h-px flex-1 bg-white/10" />
                 </div>
 
-                <div className="space-y-3">
-                    <div ref={googleButtonRef} className="w-full overflow-hidden rounded-xl bg-white" />
+                <div className="space-y-3 flex flex-col items-center">
+                    <div ref={googleButtonRef} className="inline-flex items-center justify-center p-0 rounded-full" />
 
                     {googleError && <div className="text-amber-300 text-sm">{googleError}</div>}
                 </div>
