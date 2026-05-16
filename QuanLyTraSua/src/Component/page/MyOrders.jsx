@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 export default function MyOrders() {
@@ -10,10 +11,13 @@ export default function MyOrders() {
             try {
                 // Lấy User từ localStorage
                 const user = JSON.parse(localStorage.getItem('user'));
-                if (!user) return;
+                if (!user) {
+                    setLoading(false);
+                    return;
+                }
 
                 const res = await api.get(`/orders/my-orders/${user._id}`);
-                setOrders(res);
+                setOrders(res.orders || res);
             } catch (error) {
                 console.error('Lỗi tải đơn hàng cá nhân:', error);
             } finally {
@@ -50,102 +54,180 @@ export default function MyOrders() {
                     <div className="bg-white rounded-2xl p-20 text-center shadow-sm">
                         <div className="text-6xl mb-4">🧾</div>
                         <p className="text-gray-400">Bạn chưa có đơn hàng nào.</p>
-                        <a href="/menu" className="mt-4 inline-block text-amber-600 font-bold hover:underline">
+                        <Link to="/menu" className="mt-4 inline-block text-amber-600 font-bold hover:underline">
                             Đặt món ngay!
-                        </a>
+                        </Link>
                     </div>
                 ) : (
                     <div className="grid gap-6">
-                        {orders.map((order) => (
-                            <div
-                                key={order._id}
-                                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition"
-                            >
-                                <div className="p-4 sm:p-6">
-                                    <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-xl">
-                                                ☕
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
-                                                    Mã đơn hàng
-                                                </p>
-                                                <p className="font-mono text-sm text-gray-700">
-                                                    #{order._id.slice(-8).toUpperCase()}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-bold ${statusMap[order.status]?.class || 'bg-gray-100'}`}
-                                            >
-                                                {statusMap[order.status]?.label || order.status}
-                                            </span>
-                                            <p className="text-xs text-gray-400 mt-2">
-                                                {new Date(order.createdAt).toLocaleString('vi-VN')}
-                                            </p>
-                                        </div>
-                                    </div>
+                        {orders.map((order) => {
+                            const formatAddressField = (field) => {
+                                if (!field) return '';
+                                if (typeof field === 'string') return field;
+                                if (typeof field === 'object') {
+                                    return (
+                                        field.fullAddress ||
+                                        field.address ||
+                                        field.street ||
+                                        field.line1 ||
+                                        [field.city, field.district, field.ward].filter(Boolean).join(', ') ||
+                                        ''
+                                    );
+                                }
+                                return '';
+                            };
 
-                                    <div className="space-y-4">
-                                        {order.items.map((item, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex justify-between items-center bg-gray-50 p-3 rounded-xl"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center font-bold text-amber-600 border border-gray-100">
-                                                        {item.qty || item.quantity}x
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-gray-800">{item.name}</p>
-                                                        <p className="text-[10px] text-gray-400">
-                                                            Size:{' '}
-                                                            {item.size?.code ||
-                                                                item.selectedSize?.code ||
-                                                                item.size ||
-                                                                'M'}
+                            const recipientName =
+                                order.shippingAddress?.name ||
+                                order.shippingAddress?.recipientName ||
+                                order.address?.name ||
+                                order.recipientName ||
+                                order.name ||
+                                order.customerName ||
+                                '';
+
+                            const recipientPhone =
+                                order.shippingAddress?.phone ||
+                                order.address?.phone ||
+                                order.phone ||
+                                order.recipientPhone ||
+                                order.receiverPhone ||
+                                '';
+
+                            const recipientAddress =
+                                formatAddressField(order.shippingAddress) ||
+                                formatAddressField(order.address) ||
+                                formatAddressField(order.deliveryAddress) ||
+                                '';
+
+                            return (
+                                <div
+                                    key={order._id}
+                                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition"
+                                >
+                                    <div className="p-4 sm:p-6">
+                                        <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-xl">
+                                                    ☕
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
+                                                        Mã đơn hàng
+                                                    </p>
+                                                    <p className="font-mono text-sm text-gray-700">
+                                                        #{order._id.slice(-8).toUpperCase()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-xs font-bold ${statusMap[order.status]?.class || 'bg-gray-100'}`}
+                                                >
+                                                    {statusMap[order.status]?.label || order.status}
+                                                </span>
+                                                <p className="text-xs text-gray-400 mt-2">
+                                                    {new Date(order.createdAt).toLocaleString('vi-VN')}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {(recipientName || recipientPhone || recipientAddress) && (
+                                            <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-gray-700">
+                                                <div>
+                                                    <p className="text-xs text-gray-400">Người nhận</p>
+                                                    <p className="font-medium">{recipientName || '—'}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-gray-400">Số điện thoại</p>
+                                                    <p className="font-medium">{recipientPhone || '—'}</p>
+                                                </div>
+                                                <div className="sm:col-span-1">
+                                                    <p className="text-xs text-gray-400">Địa chỉ</p>
+                                                    <p className="font-medium">{recipientAddress || '—'}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="space-y-4">
+                                            {order.items.map((item, idx) => {
+                                                const imgSrc =
+                                                    item.image ||
+                                                    item.imageUrl ||
+                                                    item.thumbnail ||
+                                                    item.productImage ||
+                                                    item.img ||
+                                                    '';
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        className="flex justify-between items-center bg-gray-50 p-3 rounded-xl"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {imgSrc ? (
+                                                                <img
+                                                                    src={imgSrc}
+                                                                    alt={item.name}
+                                                                    className="w-12 h-12 rounded-lg object-cover border border-gray-100"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center font-bold text-amber-600 border border-gray-100">
+                                                                    {item.qty || item.quantity}x
+                                                                </div>
+                                                            )}
+                                                            <div>
+                                                                <p className="text-sm font-bold text-gray-800">
+                                                                    {item.name}
+                                                                </p>
+                                                                <p className="text-[10px] text-gray-400">
+                                                                    Size:{' '}
+                                                                    {item.size?.code ||
+                                                                        item.selectedSize?.code ||
+                                                                        item.size ||
+                                                                        'M'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm font-bold text-gray-700">
+                                                            {(item.lineTotal !== undefined
+                                                                ? Number(item.lineTotal)
+                                                                : Number(
+                                                                      item.finalPrice ??
+                                                                          item.unitPrice ??
+                                                                          item.price ??
+                                                                          item.basePrice ??
+                                                                          item.priceAtPurchase ??
+                                                                          0,
+                                                                  ) * (item.qty || item.quantity || 1)
+                                                            ).toLocaleString()}
+                                                            đ
                                                         </p>
                                                     </div>
-                                                </div>
-                                                <p className="text-sm font-bold text-gray-700">
-                                                    {(item.lineTotal !== undefined
-                                                        ? Number(item.lineTotal)
-                                                        : Number(
-                                                              item.finalPrice ??
-                                                                  item.unitPrice ??
-                                                                  item.price ??
-                                                                  item.basePrice ??
-                                                                  item.priceAtPurchase ??
-                                                                  0,
-                                                          ) * (item.qty || item.quantity || 1)
-                                                    ).toLocaleString()}
-                                                    đ
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="mt-6 pt-6 border-t border-dashed border-gray-200 flex justify-between items-center">
+                                            <div>
+                                                <p className="text-xs text-gray-400">Hình thức thanh toán</p>
+                                                <p className="text-sm font-medium text-gray-700">
+                                                    {order.paymentMethod === 'PAYOS'
+                                                        ? '💳 QR Code (PayOS)'
+                                                        : '💸 Tiền mặt (COD)'}
                                                 </p>
                                             </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-6 pt-6 border-t border-dashed border-gray-200 flex justify-between items-center">
-                                        <div>
-                                            <p className="text-xs text-gray-400">Hình thức thanh toán</p>
-                                            <p className="text-sm font-medium text-gray-700">
-                                                {order.paymentMethod === 'PAYOS'
-                                                    ? '💳 QR Code (PayOS)'
-                                                    : '💸 Tiền mặt (COD)'}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-xs text-gray-400">Tổng thanh toán</p>
-                                            <p className="text-xl font-black text-amber-600">
-                                                {(order.total || order.totalPrice || 0).toLocaleString()}đ
-                                            </p>
+                                            <div className="text-right">
+                                                <p className="text-xs text-gray-400">Tổng thanh toán</p>
+                                                <p className="text-xl font-black text-amber-600">
+                                                    {(order.total || order.totalPrice || 0).toLocaleString()}đ
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
